@@ -36,4 +36,10 @@ if (__name__ == "__main__"):
 			continue
 		
 		backup_file_path = backer.dump(schema["name"])
-		fmanager.compress(file_path=backup_file_path, remove_original=True)
+		compressed_backup_file_path = fmanager.compress(file_path=backup_file_path, remove_original=True)
+
+		aws.init_s3()
+
+		aws.s3_upload(compressed_backup_file_path, backer.config["bucket"]["name"])
+	
+
