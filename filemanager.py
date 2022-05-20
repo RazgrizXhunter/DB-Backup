@@ -37,7 +37,7 @@ class file_manager:
 				
 				try:
 					with zipfile.ZipFile(zip_filename, mode="x", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as compressed_file:
-						compressed_file.write(absolute_file_path, self.get_name(absolute_file_path))
+						compressed_file.write(absolute_file_path, os.path.basename(absolute_file_path))
 
 				except FileExistsError as e:
 					print("Target file already exists")
@@ -62,20 +62,8 @@ class file_manager:
 	def get_free_disk_space(self):
 		return round(psutil.disk_usage("/").free / (2 ** 30), 3)
 	
-	def exists(self, path):
-		return os.path.exists(path)
-
-	def get_size(self, path):		
-		size = 0
-
-		with os.scandir(path) as sd:
-			for entry in sd:
-				if entry.is_file():
-					size += entry.stat().st_size
-				elif entry.is_dir():
-					size += self.get_size(entry.path)
+	def get_size(self, path):
+		if (not os.path.exists(path)):
+			return False
 		
-		return round(size / (2 ** 30), 3)
- 
-	def get_name(self, path):
-		os.path.basename(path)
+		return round(psutil.disk_usage(path).free / (2 ** 30), 3)
