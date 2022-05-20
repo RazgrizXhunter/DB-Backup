@@ -4,14 +4,25 @@
 # Mydumper/myloader
 
 # import boto3
-import psutil, math
 from backer import s3_backer
+from filemanager import file_manager
 
 if (__name__ == "__main__"):
 	backer = s3_backer()
 	backer.load_config("config.yaml")
-	# Check disk space before dumping, it should be equal or greater than the database to dump
-	free_disk_space = round(psutil.disk_usage("/").free / (2 ** 30), 3)
-	print(free_disk_space)
-	backup_file_path = backer.dump()
-	backer.compress(backup_file_path, remove_original=True)
+
+	fmanager = file_manager()
+
+	for schema in backer.config["database"]["schemas"]:
+		free_disk_space = fmanager.get_free_disk_space()
+		schema_size = fmanager.get_size(schema["path"])
+
+		if (not schema_size):
+			print("Specified directory doesn't exists. Skipping...")
+			pass
+		elif (free_disk_space > schema_size):
+			backup_file_path = backer.dump(schema["name"])
+			fmanager.compress(file_path=backup_file_path)
+		else:
+			print("Not enough space to back up")
+			pass
