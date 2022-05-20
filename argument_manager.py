@@ -26,7 +26,7 @@ class arg_manager():
 		file = logging.FileHandler("debug.log")
 		console = logging.StreamHandler()
 
-		format = "%(asctime)s - [%(levelname)s]:\n%(message)s"
+		format = "%(levelname)s - %(asctime)s:\n\t%(message)s"
 		formatter = logging.Formatter(format)
 
 		file.setFormatter(formatter)
