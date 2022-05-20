@@ -23,7 +23,8 @@ class s3_backer:
 		print(f"Attempting dump of schema: {schema}")
 
 		if (self.config == None):
-			return print("You need to load the config file first!")
+			print("You need to load the config file first!")
+			sys.exit()
 		
 		if (not os.path.isdir(self.config["backup"]["target_directory"])):
 			print("Specified target directory doesn't exist. Creating...")
