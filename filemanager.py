@@ -56,7 +56,7 @@ class file_manager:
 			except Exception as e:
 				logger.error(e)
 		
-		return True
+		return self.get_directory(absolute_file_path) + zip_filename
 	
 	def created_on(self, file_path):
 		return time.ctime(os.path.getmtime(file_path))
@@ -80,4 +80,7 @@ class file_manager:
 		return round(size / (2 ** 30), 3)
  
 	def get_name(self, path):
-		os.path.basename(path)
+		return os.path.basename(path)
+	
+	def get_directory(self, path):
+		return os.path.dirname(path)
