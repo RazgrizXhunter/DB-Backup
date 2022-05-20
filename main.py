@@ -1,9 +1,10 @@
+#!/usr/bin/env python
+
 # a backup is not complete unless you make a copy of the binlogs along with it
 # mysqldump doesn’t include routines and events in its output - you have to explicitly set --routines (-R) and --events (-E) flags
 # if you want to take a consistent backup then things become tricky. As long as you use InnoDB only, you can use --single-transaction flag and you should be all set
 # Mydumper/myloader
 
-# import boto3
 import logging
 from backer import s3_backer
 from filemanager import file_manager
@@ -23,7 +24,7 @@ if (__name__ == "__main__"):
 		logger.debug(f"{schema['name']}")
 
 		if (not fmanager.exists(schema["path"])):
-			logger.warning("Specified directory doesn't exists. Skipping...")
+			logger.warning(f"Specified directory for {schema['name']} doesn't exists. Skipping...")
 			continue
 
 		free_disk_space = fmanager.get_free_disk_space()
@@ -35,4 +36,4 @@ if (__name__ == "__main__"):
 			continue
 		
 		backup_file_path = backer.dump(schema["name"])
-		fmanager.compress(file_path=backup_file_path)
+		fmanager.compress(file_path=backup_file_path, remove_original=True)
