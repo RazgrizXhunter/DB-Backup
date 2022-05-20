@@ -4,10 +4,13 @@
 # Mydumper/myloader
 
 # import boto3
+import logging
 from backer import s3_backer
 from filemanager import file_manager
 from argument_manager import arg_manager
 from aws import aws
+
+logger = logging.getLogger("logger")
 
 if (__name__ == "__main__"):
 	args = arg_manager()
@@ -17,18 +20,18 @@ if (__name__ == "__main__"):
 	fmanager = file_manager()
 
 	for schema in backer.config["database"]["schemas"]:
-		print(f"{schema['name']}")
+		logger.debug(f"{schema['name']}")
 
 		if (not fmanager.exists(schema["path"])):
-			print("Specified directory doesn't exists. Skipping...")
+			logger.warning("Specified directory doesn't exists. Skipping...")
 			continue
 
 		free_disk_space = fmanager.get_free_disk_space()
 		schema_size = fmanager.get_size(schema["path"])
-		print(f"Free space: {free_disk_space}, Schema size: {schema_size}")
+		logger.info(f"Free space: {free_disk_space}, Schema size: {schema_size}")
 
 		if (free_disk_space < schema_size):
-			print("Not enough space to back up")
+			logger.critical("Not enough space to back up")
 			continue
 		
 		backup_file_path = backer.dump(schema["name"])

@@ -1,4 +1,6 @@
-import mysql.connector
+import mysql.connector, logging
+
+logger = logging.getLogger("logger")
 
 class database:
 	connection = None
@@ -7,7 +9,7 @@ class database:
 		self.connection = mysql.connector.connect(host, user, password, database)
 	
 	def weight(database_name):
-		if (connection == None): return print("Not connected to the database")
+		if (connection == None): return logger.error("Not connected to the database")
 		
 		cursor = connection.cursor()
 

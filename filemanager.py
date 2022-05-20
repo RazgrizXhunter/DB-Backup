@@ -1,15 +1,17 @@
-import os, time, psutil
+import os, time, psutil, logging
 import gzip, zipfile, tarfile
+
+logger = logging.getLogger("logger")
 
 class file_manager:
 
 	# def __init__(self):
 
 	def compress(self, file_path, method="zip", remove_original=False):
-		print("Attempting compression...")
+		logger.info("Attempting compression...")
 
 		if (method not in ["tar", "gz", "zip"]):
-			print("Invalid compression method.")
+			logger.warning("Invalid compression method.")
 			return False
 		
 		absolute_file_path = os.path.realpath(os.path.dirname(__file__))
@@ -22,7 +24,7 @@ class file_manager:
 			absolute_file_path = os.path.join(absolute_file_path, file_path)
 		
 		if (not os.path.exists(absolute_file_path)):
-			print("Provided path doesn't exist")
+			logger.error("Provided path doesn't exist")
 			return False
 		
 		match method:
@@ -40,19 +42,19 @@ class file_manager:
 						compressed_file.write(absolute_file_path, self.get_name(absolute_file_path))
 
 				except FileExistsError as e:
-					print("Target file already exists")
+					logger.warning("Target file already exists")
 
 				except Exception as e:
-					print(e)
+					logger.error(e)
 		
-		print("Compression done")
+		logger.info("Compression done")
 
 		if (remove_original):
-			print("Deleting origin file")
+			logger.info("Deleting origin file")
 			try:
 				os.remove(absolute_file_path)
 			except Exception as e:
-				print(e)
+				logger.error(e)
 		
 		return True
 	

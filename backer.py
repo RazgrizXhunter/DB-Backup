@@ -1,4 +1,6 @@
-import sys, os, subprocess, time, yaml
+import sys, os, subprocess, time, yaml, logging
+
+logger = logging.getLogger("logger")
 
 class s3_backer:
 	config = None
@@ -9,29 +11,29 @@ class s3_backer:
 		project_dir = os.path.realpath(os.path.dirname(__file__))
 		config_file_path = os.path.join(project_dir, filename)
 
-		print(f"Opening config file in: {config_file_path}")
+		logger.info(f"Opening config file in: {config_file_path}")
 
 		with open(config_file_path) as f:
 			try:
 				self.config = yaml.safe_load(f)
-				print("Loaded")
+				logger.info("Loaded")
 			except yaml.YAMLError as error:
-				print(format(error))
+				logger.error(format(error))
 				sys.exit()
 	
 	def dump(self, schema, extension="sql"):
-		print(f"Attempting dump of schema: {schema}")
+		logger.info(f"Attempting dump of schema: {schema}")
 
 		if (self.config == None):
-			return print("You need to load the config file first!")
+			return logger.warning("You need to load the config file first!")
 		
 		if (not os.path.isdir(self.config["backup"]["target_directory"])):
-			print("Specified target directory doesn't exist. Creating...")
+			logger.warning("Specified target directory doesn't exist. Creating...")
 			try:
 				os.mkdir(self.config["backup"]["target_directory"])
 			except Exception as e:
-				print("Directory could not be created")
-				print(e)
+				logger.error("Directory could not be created")
+				logger.error(e)
 				sys.exit()
 		
 		file_path = "{target_directory}/backup_{schema}_{timestamp}.{extension}".format(
@@ -48,13 +50,13 @@ class s3_backer:
 			file_path = file_path.replace(" ", "\ ")
 		)
 
-		print(f"dumping on {file_path}")
+		logger.info(f"dumping on {file_path}")
 
 		try:
 			dump = subprocess.run(command, capture_output=True, shell=True)
-			print("Dump complete!")
+			logger.info("Dump complete!")
 		except Exception as e:
-			print(e)
+			logger.error(e)
 			sys.exit()
 		
 		with open(file_path, "w") as file:
