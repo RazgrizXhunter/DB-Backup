@@ -7,15 +7,24 @@ class arg_manager():
 
 	def __init__(self):
 		parser = argparse.ArgumentParser(
-			description="Utility tool to backup MySQL databases in AWS with Boto3",
-			formatter_class=argparse.ArgumentDefaultsHelpFormatter
+			description="Utility tool to backup MySQL databases in AWS' S3 with Boto3",
+			formatter_class=argparse.RawTextHelpFormatter
 		)
 
-		verbosity = parser.add_argument_group(title="Verbosity levels", description="Select the verbosity level. Defaults to Warning.")
+		verbosity = parser.add_argument_group(
+			title="Logging levels",
+			description=
+			"Select the logging level.\n"
+			"\tCRITICAL: 50\n"
+			"\tERROR: 40\n"
+			"\tWARNING: 30 [Default]\n"
+			"\tINFO: 20\n"
+			"\tDEBUG: 10"
+		)
 		verbosity_exclusive = verbosity.add_mutually_exclusive_group()
-		verbosity_exclusive.add_argument("-s", "--silent", action="store_true", help="Show critical errors only.")
-		verbosity_exclusive.add_argument("-v", "--verbose", action="store_true", help="Show everything.")
-		verbosity_exclusive.add_argument("-d", "--debug", action="store_true", help="Show everything and debug logs.")
+		verbosity_exclusive.add_argument("-s", "--silent", action="store_true", help="Show levels 40+.")
+		verbosity_exclusive.add_argument("-v", "--verbose", action="store_true", help="Show levels 20+.")
+		verbosity_exclusive.add_argument("-d", "--debug", action="store_true", help="Show levels 10+.")
 		
 		self.args = parser.parse_args()
 
