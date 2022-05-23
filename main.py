@@ -37,6 +37,5 @@ if (__name__ == "__main__"):
 		compressed_backup_file_path = fmanager.compress(file_path=backup_file_path, remove_original=True)
 
 		aws.init_s3(backer.config["bucket"]["aws_access_key_id"], backer.config["bucket"]["aws_secret_access_key"], backer.config["bucket"]["name"])
-
-		logger.debug(compressed_backup_file_path)
+		
 		aws.s3_upload(compressed_backup_file_path)

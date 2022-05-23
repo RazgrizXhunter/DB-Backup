@@ -58,9 +58,13 @@ class s3_backer:
 			logger.error(e)
 			sys.exit()
 		
-		with open(file_path, "w") as file:
-			file.write(dump.stdout.decode("utf-8"))
-			file.close()
+		try:
+			with open(file_path, "w") as file:
+				file.write(dump.stdout.decode("utf-8"))
+				file.close()
+		except Exception as e:
+			logger.error(e)
+			sys.exit()
 		
 		return file_path
 	
