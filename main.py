@@ -15,21 +15,19 @@ logger = logging.getLogger("logger")
 
 if (__name__ == "__main__"):
 	args = arg_manager()
+	fmanager = file_manager()
+
+	aws = aws()
+
 	backer = s3_backer()
 	backer.load_config("config.yaml")
-
-	fmanager = file_manager()
 
 	for schema in backer.config["database"]["schemas"]:
 		logger.debug(f"{schema['name']}")
 
-		if (not fmanager.exists(schema["path"])):
-			logger.warning(f"Specified directory for {schema['name']} doesn't exists. Skipping...")
-			continue
-
 		free_disk_space = fmanager.get_free_disk_space()
-		schema_size = fmanager.get_size(schema["path"])
-		logger.info(f"Free space: {free_disk_space}, Schema size: {schema_size}")
+		schema_size = backer.get_schema_size(schema["name"])
+		logger.info(f"Free space: {fmanager.to_human_readable_size(free_disk_space)}, Schema size: {fmanager.to_human_readable_size(schema_size)}")
 
 		if (free_disk_space < schema_size):
 			logger.critical("Not enough space to back up")
@@ -38,8 +36,7 @@ if (__name__ == "__main__"):
 		backup_file_path = backer.dump(schema["name"])
 		compressed_backup_file_path = fmanager.compress(file_path=backup_file_path, remove_original=True)
 
-		aws.init_s3()
+		aws.init_s3(backer.config["bucket"]["aws_access_key_id"], backer.config["bucket"]["aws_secret_access_key"], backer.config["bucket"]["name"])
 
-		aws.s3_upload(compressed_backup_file_path, backer.config["bucket"]["name"])
-	
-
+		logger.debug(compressed_backup_file_path)
+		aws.s3_upload(compressed_backup_file_path)
