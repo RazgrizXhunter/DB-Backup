@@ -27,7 +27,7 @@ class file_manager:
 			logger.error("Provided path doesn't exist")
 			return False
 		
-		match method:
+		match (method):
 			case "tar":
 				tarfile.open(absolute_file_path, mode="w")
 				

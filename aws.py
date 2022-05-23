@@ -1,29 +1,37 @@
 import sys, logging
 import boto3
-from filemanager import file_manager as fmanager
+from filemanager import file_manager
 
 logger = logging.getLogger("logger")
 
 class aws():
-	# s3 = None
 
-	# def __init__(self):
+	def __init__(self):
+		self.s3 = None
+		self.session = None
+		self.bucket = None
 	
-	def init_s3(self, credentials: dict) -> bool:
+	def init_s3(self, key: str, secret: str, bucket: str) -> bool:
 		try:
-			self.session = boto3.session(
-				aws_access_key_id=credentials["key"],
-				aws_secret_access_key=credentials["secret"]
+			self.session = boto3.Session(
+				aws_access_key_id=key,
+				aws_secret_access_key=secret
 			)
-			self.s3 = boto3.resource("s3")
+			
+			self.s3 = self.session.resource("s3")
+
+			self.bucket = self.s3.Bucket(bucket)
 
 			return True
 		except Exception as e:
 			logger.error(e)
 			sys.exit()
 	
-	def s3_upload(self, file_path: str, bucket_name: str, file_name: str = "") -> bool:
-		logger.info(f"Preparing to upload file to S3 bucket: {bucket_name}")
+	def s3_upload(self, file_path: str, file_name: str = "") -> bool:
+		fmanager = file_manager()
+
+		logger.info("Preparing to upload file to S3 bucket")
+		logger.debug(file_path)
 
 		if (not self.s3):
 			logger.error("S3 session uninitialized")
@@ -35,6 +43,10 @@ class aws():
 		if (not file_name): file_name = fmanager.get_name(file_path)
 		
 		try:
-			self.s3.bucket(bucket_name).upload_file(file_path, fmanager.get_name(file_path))
+			self.bucket.upload_file(file_path, fmanager.get_name(file_path))
 		except Exception as e:
 			logger.error(e)
+		
+		logger.info("Success!")
+
+		return True
