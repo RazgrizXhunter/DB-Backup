@@ -43,25 +43,18 @@ class s3_backer:
 			extension = extension
 		)
 		
-		command = "mysqldump -u{user} -p\'{password}\' {schema}".format(
+		command = "mysqldump -u{user} -p\'{password}\' {schema} > {file_path}".format(
 			user = self.config["database"]["user"],
 			password = self.config["database"]["password"],
-			schema = schema
+			schema = schema,
+			file_path = file_path
 		)
 
 		logger.info(f"dumping on {file_path}")
 
 		try:
-			dump = subprocess.run(command, capture_output=True, shell=True)
+			subprocess.run(command, capture_output=True, shell=True)
 			logger.info("Dump complete!")
-		except Exception as e:
-			logger.error(e)
-			sys.exit()
-		
-		try:
-			with open(file_path, "w") as file:
-				file.write(dump.stdout.decode("utf-8"))
-				file.close()
 		except Exception as e:
 			logger.error(e)
 			sys.exit()
