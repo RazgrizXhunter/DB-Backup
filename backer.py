@@ -5,8 +5,6 @@ logger = logging.getLogger("logger")
 class s3_backer:
 	config = None
 
-	# def __init__(self):
-
 	def load_config(self, filename: str):
 		project_dir = os.path.realpath(os.path.dirname(__file__))
 		config_file_path = os.path.join(project_dir, filename)

@@ -5,8 +5,6 @@ logger = logging.getLogger("logger")
 
 class file_manager:
 
-	# def __init__(self):
-
 	def compress(self, file_path, method="zip", remove_original=False):
 		logger.info("Attempting compression...")
 
@@ -67,17 +65,17 @@ class file_manager:
 	def exists(self, path):
 		return os.path.exists(path)
 
-	# def get_size(self, path):
-	# 	size = 0
+	def get_size(self, path):
+		size = 0
 
-	# 	with os.scandir(path) as sd:
-	# 		for entry in sd:
-	# 			if entry.is_file():
-	# 				size += entry.stat().st_size
-	# 			elif entry.is_dir():
-	# 				size += self.get_size(entry.path)
+		with os.scandir(path) as sd:
+			for entry in sd:
+				if entry.is_file():
+					size += entry.stat().st_size
+				elif entry.is_dir():
+					size += self.get_size(entry.path)
 		
-	#	return round(size / (2 ** 30), 3)
+		return round(size / (2 ** 30), 3)
  
 	def get_name(self, path):
 		return os.path.basename(path)

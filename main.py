@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 
-# a backup is not complete unless you make a copy of the binlogs along with it
-# mysqldump doesn’t include routines and events in its output - you have to explicitly set --routines (-R) and --events (-E) flags
-# if you want to take a consistent backup then things become tricky. As long as you use InnoDB only, you can use --single-transaction flag and you should be all set
-# Mydumper/myloader
-
 import logging
 from backer import s3_backer
 from filemanager import file_manager
