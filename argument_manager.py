@@ -1,4 +1,5 @@
 import argparse, sys, logging
+from error_handler import Error_handler
 
 logger = logging.getLogger("logger")
 
@@ -54,6 +55,7 @@ class Argument_manager:
 		
 		logger.addHandler(file)
 		logger.addHandler(console)
+		logger.addHandler(Error_handler())
 	
 	def get_params(self):
 		return vars(self.args)
