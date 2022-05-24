@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 
 import logging
-from backer import s3_backer
-from filemanager import file_manager
-from argument_manager import arg_manager
-from aws import aws
+import argument_manager
+import backer
+import filemanager
+import mailing
+import aws
 
 logger = logging.getLogger("logger")
 
 if (__name__ == "__main__"):
-	args = arg_manager()
-	fmanager = file_manager()
+	args = argument_manager()
+	fmanager = filemanager()
+	backer = backer()
+	backer.load_config("config.yaml")
 
 	aws = aws()
 
