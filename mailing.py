@@ -1,5 +1,3 @@
-# using SendGrid"s Python Library
-# https://github.com/sendgrid/sendgrid-python
 import logging
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
@@ -21,7 +19,7 @@ class Mailer:
 			html_content=mail["contents"]
 		)
 	
-	def send(self) -> bool:
+	def send(self):
 		if (not self.mail or not self.client): return False
 
 		try:
