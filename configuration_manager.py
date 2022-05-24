@@ -17,3 +17,7 @@ class Configuration_manager:
 			except yaml.YAMLError as error:
 				logger.error(format(error))
 				sys.exit()
+	
+	def getRecipients(self):
+		# Pythonics
+		return [tuple(reversed(tuple(value for value in dictionary.values() if value is not None))) for dictionary in self.config["responsibles"]]
