@@ -6,7 +6,6 @@ from configuration_manager import Configuration_manager
 from file_manager import File_manager
 from argument_manager import Argument_manager
 from aws import AWS
-from mailing import Mailer
 
 logger = logging.getLogger("logger")
 
@@ -19,14 +18,11 @@ if (__name__ == "__main__"):
 
 	for project in confmanager.config["projects"]:
 
-	aws = AWS()
-
-	for project in backer.config["projects"]:
-		if project.has_key("site"):
+		if "site" in project:
 			# backup site directory
 			pass
 
-		if project.has_key("schema"):
+		if "schema" in project:
 			schema = project["schema"]
 			logger.debug(f"Now trying to backup schema \"{schema['name']}\"")
 
