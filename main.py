@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 
 import logging
-from backer import s3_backer
-from filemanager import file_manager
-from argument_manager import arg_manager
-from aws import aws
+from file_manager import File_manager
 
 logger = logging.getLogger("logger")
 
