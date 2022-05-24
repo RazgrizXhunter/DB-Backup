@@ -19,11 +19,14 @@ if (__name__ == "__main__"):
 
 	aws = AWS()
 
-	backer = s3_backer()
-	backer.load_config("config.yaml")
+	for project in backer.config["projects"]:
+		if project.has_key("site"):
+			# backup site directory
+			pass
 
-	for schema in backer.config["database"]["schemas"]:
-		logger.debug(f"{schema['name']}")
+		if project.has_key("schema"):
+			schema = project["schema"]
+			logger.debug(f"Now trying to backup schema \"{schema['name']}\"")
 
 		free_disk_space = fmanager.get_free_disk_space()
 		schema_size = backer.get_schema_size(schema["name"])
