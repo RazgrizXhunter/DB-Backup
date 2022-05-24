@@ -3,7 +3,7 @@ import gzip, zipfile, tarfile
 
 logger = logging.getLogger("logger")
 
-class file_manager:
+class File_manager:
 
 	def compress(self, file_path, method="zip", remove_original=False):
 		logger.info("Attempting compression...")

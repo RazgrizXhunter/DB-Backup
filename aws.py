@@ -1,10 +1,10 @@
 import sys, logging
 import boto3
-from file_manager import file_manager
+from file_manager import File_manager
 
 logger = logging.getLogger("logger")
 
-class aws():
+class AWS:
 
 	def __init__(self):
 		self.s3 = None
@@ -28,7 +28,7 @@ class aws():
 			sys.exit()
 	
 	def s3_upload(self, file_path: str, file_name: str = "") -> bool:
-		fmanager = file_manager()
+		fmanager = File_manager()
 
 		logger.info("Preparing to upload file to S3 bucket")
 		logger.debug(file_path)

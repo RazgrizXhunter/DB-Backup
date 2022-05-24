@@ -2,7 +2,7 @@ import argparse, sys, logging
 
 logger = logging.getLogger("logger")
 
-class arg_manager:
+class Argument_manager:
 	args = None
 
 	def __init__(self):

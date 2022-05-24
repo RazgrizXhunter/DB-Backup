@@ -2,7 +2,7 @@ import sys, os, subprocess, time, yaml, logging, re
 
 logger = logging.getLogger("logger")
 
-class s3_backer:
+class S3_backer:
 	config = None
 
 	def load_config(self, filename: str):

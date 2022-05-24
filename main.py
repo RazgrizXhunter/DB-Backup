@@ -1,15 +1,23 @@
 #!/usr/bin/env python
 
 import logging
+from backer import S3_backer
 from file_manager import File_manager
+from argument_manager import Argument_manager
+from aws import AWS
+from mailing import Mailer
 
 logger = logging.getLogger("logger")
 
 if (__name__ == "__main__"):
-	args = arg_manager()
-	fmanager = file_manager()
+	argmanager = Argument_manager()
+	fmanager = File_manager()
+	backer = S3_backer()
+	backer.load_config("config.yaml")
 
-	aws = aws()
+	mailer = Mailer(backer.config["sendgrid"]["api_key"])
+
+	aws = AWS()
 
 	backer = s3_backer()
 	backer.load_config("config.yaml")
