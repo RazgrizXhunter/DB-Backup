@@ -2,7 +2,7 @@ import argparse, sys, logging
 
 logger = logging.getLogger("logger")
 
-class arg_manager():
+class arg_manager:
 	args = None
 
 	def __init__(self):
@@ -32,26 +32,24 @@ class arg_manager():
 
 		logger.setLevel(logging.DEBUG)
 
-		file = logging.FileHandler("debug.log")
+		file = logging.FileHandler("backup.log")
 		console = logging.StreamHandler()
 
 		format = "%(levelname)s - %(asctime)s:\n\t%(message)s"
 		formatter = logging.Formatter(format)
 
 		file.setFormatter(formatter)
+		file.setLevel(logging.DEBUG)
+
 		console.setFormatter(CustomFormatter(format))
 
 		if params["silent"]:
-			file.setLevel(logging.CRITICAL)
 			console.setLevel(logging.CRITICAL)
 		elif params["verbose"]:
-			file.setLevel(logging.INFO)
 			console.setLevel(logging.INFO)
 		elif params["debug"]:
-			file.setLevel(logging.DEBUG)
 			console.setLevel(logging.DEBUG)
 		else:
-			file.setLevel(logging.WARNING)
 			console.setLevel(logging.WARNING)
 		
 		logger.addHandler(file)
