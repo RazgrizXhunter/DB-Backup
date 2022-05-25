@@ -2,9 +2,19 @@ import os, sys, logging, yaml
 
 logger = logging.getLogger("logger")
 
-class Configuration_manager:
+class Configuration_manager_meta(type):
+	_instances = {}
 
-	def __init__(self, filename: str):
+	def __call__(cls, *args, **kwargs):
+		if cls not in cls._instances:
+			instance = super().__call__(*args, **kwargs)
+			cls._instances[cls] = instance
+		return cls._instances[cls]
+
+class Configuration_manager(metaclass=Configuration_manager_meta):
+	config = None
+
+	def load_config(self, filename: str):
 		project_dir = os.path.realpath(os.path.dirname(__file__))
 		config_file_path = os.path.join(project_dir, filename)
 
