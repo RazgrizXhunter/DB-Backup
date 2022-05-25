@@ -25,7 +25,7 @@ class Mailer:
 		try:
 			response = self.client.send(self.mail)
 		except Exception as e:
-			logger.error(f"Could not send email.\n{e}")
+			logger.critical(f"Could not send email.\n\t{e}")
 			return False
 		
 		return response.status_code

@@ -31,7 +31,7 @@ if (__name__ == "__main__"):
 			logger.info(f"Free space: {filemanager.to_human_readable_size(free_disk_space)}, Schema size: {filemanager.to_human_readable_size(schema_size)}")
 
 			if (free_disk_space < schema_size):
-				logger.critical("Not enough space to back up")
+				logger.critical("Not enough space to back up database")
 				continue
 			
 			backup_file_path = dbmanager.dump(schema["name"])
