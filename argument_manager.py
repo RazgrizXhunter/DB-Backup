@@ -34,6 +34,7 @@ class Argument_manager:
 		logger.setLevel(logging.DEBUG)
 
 		file = logging.FileHandler("backup.log")
+		temporary_file = logging.FileHandler("backup.log.tmp")
 		console = logging.StreamHandler()
 
 		format = "%(levelname)s - %(asctime)s:\n\t%(message)s"
@@ -41,6 +42,9 @@ class Argument_manager:
 
 		file.setFormatter(formatter)
 		file.setLevel(logging.DEBUG)
+		
+		temporary_file.setFormatter(formatter)
+		temporary_file.setLevel(logging.DEBUG)
 
 		console.setFormatter(CustomFormatter(format))
 
@@ -54,6 +58,7 @@ class Argument_manager:
 			console.setLevel(logging.WARNING)
 		
 		logger.addHandler(file)
+		logger.addHandler(temporary_file)
 		logger.addHandler(console)
 		logger.addHandler(Error_handler())
 	
