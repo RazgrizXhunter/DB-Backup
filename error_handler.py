@@ -29,7 +29,7 @@ class Error_handler(logging.Handler):
 			locale.setlocale(locale.LC_TIME, "es_CL")
 			date = time.strftime("%a, %d %b %Y %H:%M:%S")
 
-			email = codecs.open("./email/email_body_v3.html", "r")
+			email = codecs.open("./email/email_body.html", "r")
 			contents = email.read()
 			email.close()
 			
