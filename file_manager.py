@@ -109,3 +109,13 @@ class File_manager:
 		p = math.pow(1024, i)
 		s = round(size_bytes / p, 2)
 		return "%s %s" % (s, size_name[i])
+	
+	def has_enough_space(self, size):
+		free_disk_space = self.get_free_disk_space()
+		
+		logger.info(f"Free space: {self.to_human_readable_size(free_disk_space)}, Files size: {self.to_human_readable_size(size)}")
+
+		if (free_disk_space >= size):
+			return True
+
+		return False
