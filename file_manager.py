@@ -83,16 +83,15 @@ class File_manager:
 		return os.path.exists(path)
 
 	def get_size(self, path):
-		size = 0
+		total_size = 0
+		for dirpath, dirnames, filenames in os.walk(path):
+			for f in filenames:
+				fp = os.path.join(dirpath, f)
+				# skip if it is symbolic link
+				if not os.path.islink(fp):
+					total_size += os.path.getsize(fp)
 
-		with os.scandir(path) as sd:
-			for entry in sd:
-				if entry.is_file():
-					size += entry.stat().st_size
-				elif entry.is_dir():
-					size += self.get_size(entry.path)
-		
-		return round(size / (2 ** 30), 3)
+		return total_size
  
 	def get_name(self, path):
 		return os.path.basename(path)
