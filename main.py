@@ -73,5 +73,8 @@ def backup_database(schema, target_directory, filemanager, dbmanager, aws):
 	
 	# aws.s3_upload(backup_file_path)
 
+	if (not schema["preserve"]):
+		filemanager.delete(backup_file_path)
+
 if (__name__ == "__main__"):
 	main()
