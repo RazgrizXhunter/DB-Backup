@@ -9,7 +9,10 @@ class Mailer:
 	client = None
 
 	def __init__(self, api_key: str):
-		self.client = SendGridAPIClient(api_key)
+		try:
+			self.client = SendGridAPIClient(api_key)
+		except Exception as e:
+			logger.critical(f"Sendgrid instance could not be initialized.\n\t{e}")
 	
 	def compose(self, mail: dict):
 		self.mail = Mail(

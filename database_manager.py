@@ -8,7 +8,7 @@ class Database_manager:
 	def __init__(self, config):
 		self.config = config
 	
-	def dump_schema(self, schema: str, extension: str = "sql"):
+	def dump_schema(self, schema: str, extension: str = "sql") -> str:
 		logger.info(f"Attempting dump of schema: {schema}")
 
 		if (self.config == None):
@@ -47,11 +47,11 @@ class Database_manager:
 		
 		return file_path
 	
-	def get_schema_size(self, schema: str):
+	def get_schema_size(self, schema: str) -> int:
 		logger.info(f"Attempting to weigh schema: {schema}")
 
 		if (self.config == None):
-			logger.warning("You need to load the config file first!")
+			logger.error("You need to load the config file first!")
 			return False
 		
 		command = "mysqldump -u{user} -p\'{password}\' {schema} | wc -c".format(
@@ -66,3 +66,4 @@ class Database_manager:
 			return int(re.sub("[^0-9]", "", str(size_bytes)))
 		except Exception as e:
 			logger.error(f"Could not weigh current schema.\n\t{e}")
+			return False

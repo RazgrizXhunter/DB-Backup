@@ -20,13 +20,16 @@ class Configuration_manager(metaclass=Configuration_manager_meta):
 
 		logger.info(f"Opening config file in: {config_file_path}")
 
-		with open(config_file_path) as f:
+		with open(config_file_path) as config_file:
 			try:
-				self.config = yaml.safe_load(f)
+				self.config = yaml.safe_load(config_file)
 				logger.info("Loaded")
 			except yaml.YAMLError as error:
 				logger.critical(f"Configuration file could not be safely loaded.\n\t{format(error)}")
 	
-	def get_recipients(self):
+	def get_recipients(self) -> list:
+		if (self.config == None):
+			return False
+		
 		# Pythonics
 		return [tuple(reversed(tuple(value for value in dictionary.values() if value is not None))) for dictionary in self.config["responsibles"]]
