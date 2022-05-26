@@ -12,14 +12,7 @@ class File_manager:
 			logger.error("Invalid compression method.")
 			return False
 		
-		absolute_file_path = os.path.realpath(os.path.dirname(__file__))
-
-		if (file_path[0] == "~"):
-			absolute_file_path = os.path.join(absolute_file_path, file_path[1:])
-		elif (file_path[0] == "/"):
-			absolute_file_path = file_path
-		else:
-			absolute_file_path = os.path.join(absolute_file_path, file_path)
+		absolute_file_path = self.absolutize_path(file_path)
 		
 		if (not os.path.exists(absolute_file_path)):
 			logger.error("Provided path doesn't exist")
@@ -51,6 +44,18 @@ class File_manager:
 			self.delete(absolute_file_path)
 		
 		return zip_filename
+	
+	def absolutize_path(path):
+		absolute_file_path = os.path.realpath(os.path.dirname(__file__))
+
+		if (path[0] == "~"):
+			absolute_file_path = os.path.join(absolute_file_path, path[1:])
+		elif (path[0] == "/"):
+			absolute_file_path = path
+		else:
+			absolute_file_path = os.path.join(absolute_file_path, path)
+		
+		return absolute_file_path
 	
 	def delete(self, path):
 		logger.warning(f"Deleting {path}")
