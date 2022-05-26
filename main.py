@@ -24,12 +24,12 @@ def main():
 
 	for project in confmanager.config["projects"]:
 		if "site" in project:
-			backup_site(project["site"], filemanager, aws)
+			backup_site(project["site"], confmanager.config["backup"]["target_directory"], filemanager, aws)
 		
 		if "schema" in project:
-			backup_database(project["schema"], filemanager, dbmanager, aws)
+			backup_database(project["schema"], confmanager.config["backup"]["target_directory"], filemanager, dbmanager, aws)
 
-def backup_site(site_files, filemanager, aws):
+def backup_site(site_files, target_directory, filemanager, aws):
 	logger.info(f"Now trying to backup files in \"{site_files['path']}\"")
 
 	if (not filemanager.exists(site_files["path"])):
@@ -45,17 +45,17 @@ def backup_site(site_files, filemanager, aws):
 			logger.error("Not enough space to backup site files")
 			return
 
-		compressed_site_backup_file_path = filemanager.compress(file_path=site_files["path"]) # NEVER REMOVE ORIGINAL, IT'D DELETE THE SITE!
+		compressed_site_backup_file_path = filemanager.compress(file_path=site_files["path"], target_directory=target_directory) # NEVER REMOVE ORIGINAL, IT'D DELETE THE SITE!
 
-		aws.s3_upload(compressed_site_backup_file_path)
+		# aws.s3_upload(compressed_site_backup_file_path)
 
 		if (not site_files["preserve"]):
 			filemanager.delete(compressed_site_backup_file_path)
 	
-	else:
-		aws.s3_upload(site_files["path"])
+	# else:
+		# aws.s3_upload(site_files["path"])
 
-def backup_database(schema, filemanager, dbmanager, aws):
+def backup_database(schema, target_directory, filemanager, dbmanager, aws):
 	logger.info(f"Now trying to backup schema \"{schema['name']}\"")
 
 	free_disk_space = filemanager.get_free_disk_space()
@@ -69,9 +69,9 @@ def backup_database(schema, filemanager, dbmanager, aws):
 	backup_file_path = dbmanager.dump_schema(schema["name"])
 
 	if (schema["compress"]):
-		backup_file_path = filemanager.compress(file_path=backup_file_path, remove_original=(not schema["preserve"]))
+		backup_file_path = filemanager.compress(file_path=backup_file_path, target_directory=target_directory, remove_original=(not schema["preserve"]))
 	
-	aws.s3_upload(backup_file_path)
+	# aws.s3_upload(backup_file_path)
 
 if (__name__ == "__main__"):
 	main()

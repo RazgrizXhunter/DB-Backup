@@ -5,7 +5,7 @@ logger = logging.getLogger("logger")
 
 class File_manager:
 
-	def compress(self, file_path, method="zip", remove_original=False):
+	def compress(self, file_path, target_directory, method="zip", remove_original=False):
 		logger.info("Attempting compression...")
 
 		if (method not in ["tar", "gz", "zip"]):
@@ -26,11 +26,15 @@ class File_manager:
 				tarfile.open(absolute_file_path, mode="x:gz")
 
 			case "zip":
-				zip_filename = absolute_file_path.split(".")[0].replace(" ", "_") + ".zip"
+				zip_filename = os.path.join(target_directory, self.get_name(absolute_file_path).split(".")[0].replace(" ", "_") + ".zip")
 				
 				try:
+					logger.info(f"Compressing in: {zip_filename}")
 					with zipfile.ZipFile(zip_filename, mode="x", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as compressed_file:
-						compressed_file.write(absolute_file_path, self.get_name(absolute_file_path))
+						if (os.path.isdir(absolute_file_path)):
+							self.zipdir(absolute_file_path, compressed_file)
+						else:
+							compressed_file.write(absolute_file_path, self.get_name(absolute_file_path))
 
 				except FileExistsError as e:
 					logger.warning("Target file already exists")
@@ -45,6 +49,11 @@ class File_manager:
 		
 		return zip_filename
 	
+	def zipdir(self, path, zipfile_handle):
+		for root, dirs, files in os.walk(path):
+			for file in files:
+				zipfile_handle.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), os.path.join(path, '..')))
+	
 	def absolutize_path(self, path):
 		absolute_file_path = os.path.realpath(os.path.dirname(__file__))
 
@@ -55,7 +64,7 @@ class File_manager:
 		else:
 			absolute_file_path = os.path.join(absolute_file_path, path)
 		
-		return absolute_file_path
+		return absolute_file_path if absolute_file_path[len(absolute_file_path)-1] != "/" else absolute_file_path[:-1]
 	
 	def delete(self, path):
 		logger.warning(f"Deleting {path}")
