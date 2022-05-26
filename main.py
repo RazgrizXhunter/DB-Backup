@@ -47,13 +47,13 @@ def backup_site(site_files, target_directory, filemanager, aws):
 
 		compressed_site_backup_file_path = filemanager.compress(file_path=site_files["path"], target_directory=target_directory) # NEVER REMOVE ORIGINAL, IT'D DELETE THE SITE!
 
-		# aws.s3_upload(compressed_site_backup_file_path)
+		aws.s3_upload(compressed_site_backup_file_path)
 
 		if (not site_files["preserve"]):
 			filemanager.delete(compressed_site_backup_file_path)
 	
-	# else:
-		# aws.s3_upload(site_files["path"])
+	else:
+		aws.s3_upload(site_files["path"])
 
 def backup_database(schema, target_directory, filemanager, dbmanager, aws):
 	logger.info(f"Now trying to backup schema \"{schema['name']}\"")
@@ -71,7 +71,7 @@ def backup_database(schema, target_directory, filemanager, dbmanager, aws):
 	if (schema["compress"]):
 		backup_file_path = filemanager.compress(file_path=backup_file_path, target_directory=target_directory, remove_original=(not schema["preserve"]))
 	
-	# aws.s3_upload(backup_file_path)
+	aws.s3_upload(backup_file_path)
 
 if (__name__ == "__main__"):
 	main()
