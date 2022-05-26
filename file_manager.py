@@ -45,7 +45,7 @@ class File_manager:
 		
 		return zip_filename
 	
-	def absolutize_path(path):
+	def absolutize_path(self, path):
 		absolute_file_path = os.path.realpath(os.path.dirname(__file__))
 
 		if (path[0] == "~"):
