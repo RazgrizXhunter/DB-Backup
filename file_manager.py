@@ -47,15 +47,17 @@ class File_manager:
 		
 		logger.info("Compression done")
 
-		# Make this it's own function and modify logger to reflect changes
 		if (remove_original):
-			logger.info("Deleting origin file")
-			try:
-				os.remove(absolute_file_path)
-			except Exception as e:
-				logger.error(f"Could not delete origin file.\n\t{e}")
+			self.delete(absolute_file_path)
 		
 		return zip_filename
+	
+	def delete(self, path):
+		logger.warning(f"Deleting {path}")
+		try:
+			os.remove(path)
+		except Exception as e:
+			logger.error(f"Could not complete deletion.\n\t{e}")
 	
 	def created_on(self, file_path):
 		return time.ctime(os.path.getmtime(file_path))
