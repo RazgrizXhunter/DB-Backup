@@ -45,9 +45,12 @@ def backup_site(site_files, filemanager, aws):
 			logger.error("Not enough space to backup site files")
 			return
 
-		compressed_site_backup_file_path = filemanager.compress(file_path=site_files["path"], remove_original=(not site_files["preserve"]))
+		compressed_site_backup_file_path = filemanager.compress(file_path=site_files["path"]) # NEVER REMOVE ORIGINAL, IT'D DELETE THE SITE!
 
 		aws.s3_upload(compressed_site_backup_file_path)
+
+		if (not site_files["preserve"]):
+			filemanager.delete(compressed_site_backup_file_path)
 	
 	else:
 		aws.s3_upload(site_files["path"])
