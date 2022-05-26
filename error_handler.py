@@ -78,11 +78,11 @@ class Error_handler(logging.Handler):
 
 		mailer.compose(mail)
 
-		try:
-			logger.debug(f"Mail was to be sent with:\n\t{logs}") # We don't wanna fill everyone's inbox with junk
-			# mailer.send()
-		except Exception as e:
-			logger.error(f"Could not send mail")
-			return False
+		# try:
+		# 	logger.debug(f"Mail was to be sent with:\n\t{logs}") # We don't wanna fill everyone's inbox with junk
+		# 	mailer.send()
+		# except Exception as e:
+		# 	logger.error(f"Could not send mail")
+		# 	return False
 
 		return True
