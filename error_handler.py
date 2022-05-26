@@ -1,4 +1,4 @@
-import logging, sys, os, atexit, codecs, socket, glob, time, locale
+import logging, sys, os, atexit, codecs, socket, glob, time, locale, inspect
 from mailing import Mailer
 from configuration_manager import Configuration_manager
 
@@ -14,13 +14,17 @@ class Error_handler(logging.Handler):
 	def emit(self, record):
 		if (record.levelno >= 40):
 			self.has_failed = True
+		elif(record.levelno == 50):
+			logger.warning("Terminating.")
+			sys.exit()
 	
 	def wrapup(self):
+		logger.debug("Wrapping up")
+		
 		confmanager = Configuration_manager()
 		
 		if (not confmanager.config):
-			logger.error("Configuration file has not been loaded properly")
-			sys.exit()
+			logger.critical("Configuration file has not been loaded properly")
 		
 		if (self.has_failed):
 			mailer = Mailer(confmanager.config["sendgrid"]["api_key"])
@@ -49,7 +53,9 @@ class Error_handler(logging.Handler):
 			}
 
 			mailer.compose(mail)
-			mailer.send()
+
+			# logger.debug(f"Mail was to be sent with:\n\t{logs}") # We don't wanna fill everyone's inbox with junk
+			# mailer.send()
 			
 			self.cleanup()
 			print("exiting")

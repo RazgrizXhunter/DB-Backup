@@ -24,17 +24,16 @@ class AWS:
 
 			return True
 		except Exception as e:
-			logger.error(e)
-			sys.exit()
+			logger.critical(f"AWS S3 service could not be initialized\n\t{e}")
 	
 	def s3_upload(self, file_path: str, file_name: str = "") -> bool:
 		fmanager = File_manager()
 
 		logger.info("Preparing to upload file to S3 bucket")
-		logger.debug(file_path)
+		logger.debug(f"File: {file_path}")
 
 		if (not self.s3):
-			logger.error("S3 session uninitialized")
+			logger.critical("S3 session uninitialized")
 
 		if (not fmanager.exists(file_path)):
 			logger.error(f"Failed to upload file {file_path}. The file doesn't exist")
@@ -45,8 +44,8 @@ class AWS:
 		try:
 			self.bucket.upload_file(file_path, fmanager.get_name(file_path))
 		except Exception as e:
-			logger.error(e)
+			logger.error(f"Failed to upload file.\n\t{e}")
 		
-		logger.info("Success!")
+		logger.info("File uploaded succesfully")
 
 		return True

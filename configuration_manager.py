@@ -25,8 +25,7 @@ class Configuration_manager(metaclass=Configuration_manager_meta):
 				self.config = yaml.safe_load(f)
 				logger.info("Loaded")
 			except yaml.YAMLError as error:
-				logger.error(format(error))
-				sys.exit()
+				logger.critical(f"Configuration file could not be safely loaded.\n\t{format(error)}")
 	
 	def get_recipients(self):
 		# Pythonics

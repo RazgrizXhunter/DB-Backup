@@ -9,7 +9,7 @@ class File_manager:
 		logger.info("Attempting compression...")
 
 		if (method not in ["tar", "gz", "zip"]):
-			logger.warning("Invalid compression method.")
+			logger.error("Invalid compression method.")
 			return False
 		
 		absolute_file_path = os.path.realpath(os.path.dirname(__file__))
@@ -43,16 +43,17 @@ class File_manager:
 					logger.warning("Target file already exists")
 
 				except Exception as e:
-					logger.error(e)
+					logger.error(f"File could not be compressed.\n\t{e}")
 		
 		logger.info("Compression done")
 
+		# Make this it's own function and modify logger to reflect changes
 		if (remove_original):
 			logger.info("Deleting origin file")
 			try:
 				os.remove(absolute_file_path)
 			except Exception as e:
-				logger.error(e)
+				logger.error(f"Could not delete origin file.\n\t{e}")
 		
 		return zip_filename
 	
