@@ -1,12 +1,12 @@
 import sys, os, subprocess, time, logging, re
+from configuration_manager import Configuration_manager
 
 logger = logging.getLogger("logger")
 
 class Database_manager:
-	config = None
-
-	def __init__(self, config):
-		self.config = config
+	def __init__(self) -> None:
+		confmanager = Configuration_manager()
+		self.config = confmanager.config
 	
 	def dump_schema(self, schema: str, extension: str = "sql") -> str:
 		logger.info(f"Attempting dump of schema: {schema}")
@@ -28,7 +28,7 @@ class Database_manager:
 			timestamp = time.strftime('%Y-%m-%d_%H-%M-%S'),
 			extension = extension
 		)
-		
+
 		command = "mysqldump -u{user} -p\'{password}\' {schema} > {file_path}".format(
 			user = self.config["database"]["user"],
 			password = self.config["database"]["password"],
@@ -50,10 +50,10 @@ class Database_manager:
 	def get_schema_size(self, schema: str) -> int:
 		logger.info(f"Attempting to weigh schema: {schema}")
 
-		if (self.config == None):
+		if (not self.config):
 			logger.error("You need to load the config file first!")
 			return False
-		
+
 		command = "mysqldump -u{user} -p\'{password}\' {schema} | wc -c".format(
 			user = self.config["database"]["user"],
 			password = self.config["database"]["password"],

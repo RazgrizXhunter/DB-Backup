@@ -13,9 +13,6 @@ class Configuration_manager_meta(type):
 		return cls._instances[cls]
 
 class Configuration_manager(metaclass=Configuration_manager_meta):
-	config = {}
-	registry = {}
-
 	def load_config(self, filename: str) -> bool:
 		project_dir = os.path.realpath(os.path.dirname(__file__))
 		config_file_path = os.path.join(project_dir, filename)
@@ -69,8 +66,9 @@ class Configuration_manager(metaclass=Configuration_manager_meta):
 		return True
 	
 	def has_entry(self, key):
+		key = key.replace(" ", "_")
 		if (not self.registry):
-			logger.warning("Registry not loaded")
+			logger.warning("Registry not loaded or empty")
 			return False
 		
 		if (key in self.registry):
@@ -79,13 +77,20 @@ class Configuration_manager(metaclass=Configuration_manager_meta):
 		return False
 	
 	def new_entry(self, key):
+		key = key.replace(" ", "_")
 		self.registry[key] = datetime.datetime.fromtimestamp(0)
 		self.save_registry()
 		return self.registry[key]
 	
 	def update_entry(self, key):
+		key = key.replace(" ", "_")
 		self.registry[key] = datetime.datetime.today()
+		self.save_registry()
 		return True
+	
+	def get_entry(self, key):
+		key = key.replace(" ", "_")
+		return self.registry[key]
 	
 	def get_recipients(self) -> list:
 		if (self.config == None):
