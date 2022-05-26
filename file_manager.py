@@ -13,7 +13,7 @@ class File_manager:
 			return False
 		
 		absolute_file_path = self.absolutize_path(file_path)
-		
+
 		if (not os.path.exists(absolute_file_path)):
 			logger.error("Provided path doesn't exist")
 			return False
@@ -26,7 +26,7 @@ class File_manager:
 				tarfile.open(absolute_file_path, mode="x:gz")
 
 			case "zip":
-				zip_filename = absolute_file_path.split(".")[0] + ".zip"
+				zip_filename = absolute_file_path.split(".")[0].replace(" ", "_") + ".zip"
 				
 				try:
 					with zipfile.ZipFile(zip_filename, mode="x", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as compressed_file:
