@@ -4,9 +4,7 @@ from modules.configuration_manager import Configuration_manager
 from modules.backup_manager import Backup_manager
 from modules.argument_manager import Argument_manager
 
-from configuration_manager import Configuration_manager
-from backup_manager import Backup_manager
-from argument_manager import Argument_manager
+logger = logging.getLogger("logger")
 
 if (__name__ == "__main__"):
 	Argument_manager()
@@ -35,6 +33,8 @@ if (__name__ == "__main__"):
 			if (backup_manager.backup_is_due(entry, frequency)):
 				backup_manager.backup_site(project["site"], confmanager.config["backup"]["target_directory"])
 				confmanager.update_entry(key)
+			else:
+				logger.info(f"Site files {key} backup is up-to-date.")
 		
 		if "schema" in project:
 			key = project["schema"]["name"]
@@ -49,3 +49,5 @@ if (__name__ == "__main__"):
 			if (backup_manager.backup_is_due(entry, frequency)):
 				backup_manager.backup_database(project["schema"], confmanager.config["backup"]["target_directory"])
 				confmanager.update_entry(key)
+			else:
+				logger.info(f"Schema {key} backup is up-to-date.")
