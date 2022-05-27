@@ -1,8 +1,8 @@
 import logging, datetime, sys
-from configuration_manager import Configuration_manager
-from file_manager import File_manager
-from database_manager import Database_manager
-from aws import AWS
+from modules.configuration_manager import Configuration_manager
+from modules.file_manager import File_manager
+from modules.database_manager import Database_manager
+from modules.aws import AWS
 
 logger = logging.getLogger("logger")
 

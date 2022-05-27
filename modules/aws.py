@@ -1,6 +1,6 @@
 import sys, logging
 import boto3
-from file_manager import File_manager
+from modules.file_manager import File_manager
 
 logger = logging.getLogger("logger")
 

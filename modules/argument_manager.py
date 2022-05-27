@@ -1,5 +1,5 @@
 import argparse, sys, logging
-from error_handler import Error_handler
+from modules.error_handler import Error_handler
 
 logger = logging.getLogger("logger")
 

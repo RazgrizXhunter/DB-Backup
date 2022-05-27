@@ -1,5 +1,5 @@
 import os, sys, logging, yaml, datetime
-from file_manager import File_manager
+from modules.file_manager import File_manager
 
 logger = logging.getLogger("logger")
 
@@ -13,13 +13,15 @@ class Configuration_manager_meta(type):
 		return cls._instances[cls]
 
 class Configuration_manager(metaclass=Configuration_manager_meta):
-	def load_config(self, filename: str) -> bool:
-		project_dir = os.path.realpath(os.path.dirname(__file__))
-		config_file_path = os.path.join(project_dir, filename)
+	config_path = None
+	registry_path = None
 
-		logger.info(f"Opening config file in: {config_file_path}")
+	def load_config(self, absolute_path: str) -> bool:
+		self.config_path = absolute_path
 
-		with open(config_file_path) as config_file:
+		logger.info(f"Opening config file in: {self.config_path}")
+
+		with open(self.config_path) as config_file:
 			try:
 				self.config = yaml.safe_load(config_file)
 				logger.info("Loaded")
@@ -28,24 +30,23 @@ class Configuration_manager(metaclass=Configuration_manager_meta):
 		
 		return True
 	
-	def load_registry(self, filename: str):
-		project_dir = os.path.realpath(os.path.dirname(__file__))
-		registry_file_path = os.path.join(project_dir, filename)
+	def load_registry(self, absolute_path: str):
+		self.registry_path = absolute_path
 
-		logger.info(f"Opening registry file in: {registry_file_path}")
+		logger.info(f"Opening registry file in: {self.registry_path}")
 		filemanager = File_manager()
 
-		if (not filemanager.exists(registry_file_path)):
+		if (not filemanager.exists(self.registry_path)):
 			logger.warning(f"Registry file doesn't exist, creating...")
 
 			try:
-				with open(registry_file_path, "a") as file:
+				with open(self.registry_path, "a") as file:
 					file.close()
 					logger.debug(f"Registry file created.")
 			except Exception as e:
 				logger.critical("Could not create registry.")
 		
-		with open(registry_file_path, "r") as registry_file:
+		with open(self.registry_path, "r") as registry_file:
 			try:
 				self.registry = yaml.safe_load(registry_file) or {}
 			except yaml.YAMLError as error:
@@ -58,7 +59,7 @@ class Configuration_manager(metaclass=Configuration_manager_meta):
 			logger.warning("You can't save an empty registry")
 		
 		try:
-			with open("registry.yaml", "w") as registry_file:
+			with open(self.registry_path, "w") as registry_file:
 				yaml.dump(self.registry, registry_file)
 		except Exception as e:
 			logger.critical(f"Could not save registry.\n\t{e}")

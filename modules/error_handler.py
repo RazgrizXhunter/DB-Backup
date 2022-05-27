@@ -1,6 +1,6 @@
 import logging, sys, os, atexit, codecs, socket, glob, time, locale, inspect
-from mailing import Mailer
-from configuration_manager import Configuration_manager
+from modules.mailing import Mailer
+from modules.configuration_manager import Configuration_manager
 
 logger = logging.getLogger("logger")
 

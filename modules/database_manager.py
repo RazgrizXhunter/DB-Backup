@@ -1,5 +1,5 @@
 import sys, os, subprocess, time, logging, re
-from configuration_manager import Configuration_manager
+from modules.configuration_manager import Configuration_manager
 
 logger = logging.getLogger("logger")
 

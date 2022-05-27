@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+import os, logging
+from modules.configuration_manager import Configuration_manager
+from modules.backup_manager import Backup_manager
+from modules.argument_manager import Argument_manager
 
 from configuration_manager import Configuration_manager
 from backup_manager import Backup_manager
@@ -7,9 +11,13 @@ from argument_manager import Argument_manager
 if (__name__ == "__main__"):
 	Argument_manager()
 
+	project_dir = os.path.realpath(os.path.dirname(__file__))
+	config_path = os.path.join(project_dir, "config/config.yaml")
+	registry_path = os.path.join(project_dir, "config/registry.yaml")
+	
 	confmanager = Configuration_manager()
-	confmanager.load_config("config.yaml")
-	confmanager.load_registry("registry.yaml")
+	confmanager.load_config(config_path)
+	confmanager.load_registry(registry_path)
 
 	backup_manager = Backup_manager()
 
