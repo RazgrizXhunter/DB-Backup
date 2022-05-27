@@ -1,0 +1,38 @@
+---
+database:
+  user: user
+  password: password123
+projects:
+  - DB-Backup_project:
+    site:
+      path: "/path/to/project/directory"
+      backup_frequency: 7 # Days
+      backup_method: put
+      compress: true
+      preserve: false
+    schema:
+      name: mysql_schema
+      backup_frequency: 1
+      backup_method: put
+      compress: true
+      preserve: false
+backup:
+  target_directory: "/home/user/Backups"
+bucket:
+  name: bucket-name
+  aws_access_key_id: "AWSACCESSKEYID"
+  aws_secret_access_key: "AWSSECRET"
+sendgrid:
+  api_key: "SG.APIKey"
+  sender: "example@example.com"
+responsibles:
+  - John:
+    name: "John Doe"
+    email: "john.doe@example.com"
+  - Jane:
+    name: "Jane Smith"
+    email: "jsmith@test.com"
+  - Juan:
+    name: "Juan Perez"
+    email: "juanito@something.com"
+...
