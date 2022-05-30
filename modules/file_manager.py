@@ -8,7 +8,7 @@ class File_manager:
 	def compress(self, file_path, target_directory, method="zip", remove_original=False):
 		logger.info("Attempting compression...")
 
-		if (method not in ["tar", "gz", "zip"]):
+		if (method not in ["zip"]):
 			logger.error("Invalid compression method.")
 			return False
 		
@@ -18,29 +18,24 @@ class File_manager:
 			logger.error("Provided path doesn't exist")
 			return False
 		
-		match (method):
-			case "tar":
-				tarfile.open(absolute_file_path, mode="w")
-				
-			case "gz":
-				tarfile.open(absolute_file_path, mode="x:gz")
+		if (method == "zip"): # match - not supported by python 3.9 or less
+			zip_filename = os.path.join(target_directory, self.get_name(absolute_file_path).split(".")[0].replace(" ", "_") + ".zip")
+			
+			try:
+				logger.info(f"Compressing in: {zip_filename}")
+				with zipfile.ZipFile(zip_filename, mode="x", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as compressed_file:
+					if (os.path.isdir(absolute_file_path)):
+						self.zipdir(absolute_file_path, compressed_file)
+					else:
+						compressed_file.write(absolute_file_path, self.get_name(absolute_file_path))
 
-			case "zip":
-				zip_filename = os.path.join(target_directory, self.get_name(absolute_file_path).split(".")[0].replace(" ", "_") + ".zip")
-				
-				try:
-					logger.info(f"Compressing in: {zip_filename}")
-					with zipfile.ZipFile(zip_filename, mode="x", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as compressed_file:
-						if (os.path.isdir(absolute_file_path)):
-							self.zipdir(absolute_file_path, compressed_file)
-						else:
-							compressed_file.write(absolute_file_path, self.get_name(absolute_file_path))
+			except FileExistsError as e:
+				logger.warning("Target file already exists")
 
-				except FileExistsError as e:
-					logger.warning("Target file already exists")
-
-				except Exception as e:
-					logger.error(f"File could not be compressed.\n\t{e}")
+			except Exception as e:
+				logger.error(f"File could not be compressed.\n\t{e}")
+		else:
+			logger.error("Compression method not supported")
 		
 		logger.info("Compression done")
 
