@@ -1,4 +1,4 @@
-import logging, sys, os, atexit, codecs, socket, glob, time, locale, inspect
+import logging, sys, os, atexit, codecs, socket, glob, time, locale
 from modules.mailing import Mailer
 from modules.configuration_manager import Configuration_manager
 
@@ -47,7 +47,7 @@ class Error_handler(logging.Handler):
 			locale.setlocale(locale.LC_TIME, "es_CL.utf8")
 			date = time.strftime("%a, %d %b %Y %H:%M:%S")
 		except Exception as e:
-			logger.error(f"Time locale could not be set, email will be sent without date.\n\t{e}")
+			logger.warning(f"Time locale could not be set, email will be sent without date.\n\t{e}")
 		
 		try:
 			email = codecs.open("./email/email_body.html", "r")

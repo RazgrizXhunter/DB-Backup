@@ -1,4 +1,4 @@
-import logging, datetime, sys
+import logging, datetime
 from modules.configuration_manager import Configuration_manager
 from modules.file_manager import File_manager
 from modules.database_manager import Database_manager
