@@ -1,6 +1,7 @@
 import logging, sys, os, atexit, codecs, socket, glob, time, locale
 from modules.mailing import Mailer
 from modules.configuration_manager import Configuration_manager
+from modules.custom_alerts import Custom_alerts
 
 logger = logging.getLogger("logger")
 
@@ -20,6 +21,10 @@ class Error_handler(logging.Handler):
 	
 	def wrapup(self):
 		logger.debug("Wrapping up")
+		self.alert_manager = Custom_alerts()
+
+		if (self.alert_manager.space_alert()):
+			self.has_failed = True
 		
 		if (self.has_failed):
 			email_sent = self.send_error_mail()

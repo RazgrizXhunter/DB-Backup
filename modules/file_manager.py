@@ -74,6 +74,9 @@ class File_manager:
 	def get_free_disk_space(self):
 		return psutil.disk_usage("/").free
 	
+	def get_total_disk_space(self):
+		return psutil.disk_usage("/").total
+	
 	def exists(self, path):
 		return os.path.exists(path)
 
