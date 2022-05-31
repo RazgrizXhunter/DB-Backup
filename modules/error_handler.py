@@ -15,7 +15,8 @@ class Error_handler(logging.Handler):
 	def emit(self, record):
 		if (record.levelno >= 40):
 			self.has_failed = True
-		elif(record.levelno == 50):
+		
+		if(record.levelno == 50):
 			logger.warning("Terminating.")
 			sys.exit()
 	
