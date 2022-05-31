@@ -1,4 +1,6 @@
 ---
+custom_alerts:
+  free_space_percentage: 10
 database:
   user: user
   password: password123
