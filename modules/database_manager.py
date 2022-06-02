@@ -1,4 +1,4 @@
-import sys, os, subprocess, time, logging, re
+import os, subprocess, time, logging, re
 from modules.configuration_manager import Configuration_manager
 
 logger = logging.getLogger("logger")
