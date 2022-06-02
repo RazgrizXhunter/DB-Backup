@@ -12,8 +12,8 @@ class Innova_monitor:
 		self.config = confmanager.config["innova_monitor"]
 
 		self.session = requests.Session()
-		self.session.headers = { "secret": confmanager.config["innova_monitor"]["secret"] }
-		self.api_url = confmanager.config["innova_monitor"]["url"]
+		self.session.headers = { "secret": self.config["secret"] }
+		self.api_url = self.config["url"]
 
 		self.machine = {
 			"ip" : self.config["ip"] if "ip" in self.config else self.my_ip(),
