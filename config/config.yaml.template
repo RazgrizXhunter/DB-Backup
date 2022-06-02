@@ -29,6 +29,7 @@ sendgrid:
   api_key: "SG.APIKey"
   sender: "example@example.com"
 innova_monitor:
+  # name: "Set a proper name" # Else, the script will take the hostname as name
   secret: "some_secret"
   url: "http://localhost/api"
 responsibles:
