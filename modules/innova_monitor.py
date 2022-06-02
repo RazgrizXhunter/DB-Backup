@@ -24,8 +24,12 @@ class Innova_monitor:
 		}
 	
 	def ping(self) -> bool:
-		return True if self.session.get(self.api_url).status_code == 200 else False # self.api_url + "/ping"
-
+		try:
+			return True if self.session.get(self.api_url).status_code == 200 else False # self.api_url + "/ping"
+		except Exception as e:
+			logger.error(e)
+			return False
+		
 	def my_ip(self) -> str:
 		return self.session.get("https://api.ipify.org").content.decode("utf8")
 
