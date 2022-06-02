@@ -1,6 +1,7 @@
 ---
 custom_alerts:
-  free_space_percentage: 10
+  space_critical: 10
+  space_warning: 30
 database:
   user: user
   password: password123
@@ -27,6 +28,9 @@ bucket:
 sendgrid:
   api_key: "SG.APIKey"
   sender: "example@example.com"
+innova_monitor:
+  secret: "some_secret"
+  url: "http://localhost/api"
 responsibles:
   - John:
     name: "John Doe"
