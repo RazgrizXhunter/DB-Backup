@@ -3,6 +3,7 @@ from modules.mailing import Mailer
 from modules.configuration_manager import Configuration_manager
 from modules.custom_alerts import Custom_alerts
 from modules.file_manager import File_manager
+from modules.innova_monitor import Innova_monitor
 
 logger = logging.getLogger("logger")
 
@@ -13,6 +14,8 @@ class Error_handler(logging.Handler):
 		super().__init__()
 		atexit.register(self.wrapup)
 
+		self.confmanager = Configuration_manager()
+
 	def emit(self, record):
 		if (record.levelno >= 40):
 			self.has_failed = True
@@ -22,6 +25,8 @@ class Error_handler(logging.Handler):
 			sys.exit()
 	
 	def wrapup(self):
+		innova_monitor = Innova_monitor()
+
 		logger.debug("Wrapping up")
 		self.alert_manager = Custom_alerts()
 
@@ -32,6 +37,11 @@ class Error_handler(logging.Handler):
 			email_sent = self.send_error_mail()
 			
 		self.cleanup()
+		
+		if (innova_monitor.ping()):
+			innova_monitor.checkout()
+		else:
+			logger.warning("Innova Monitor unresponsive")
 	
 	def cleanup(self):
 		logger.debug("Removing temporary files")
@@ -40,14 +50,13 @@ class Error_handler(logging.Handler):
 	
 	def send_error_mail(self) -> bool:
 		logger.debug("Sending notification email")
-		confmanager = Configuration_manager()
 		file_manager = File_manager()
 		
-		if (not confmanager.config):
+		if (not self.confmanager.config):
 			logger.critical("Configuration file has not been loaded properly")
 		
-		mailer = Mailer(confmanager.config["sendgrid"]["api_key"])
-		recipients = confmanager.get_recipients()
+		mailer = Mailer(self.confmanager.config["sendgrid"]["api_key"])
+		recipients = self.confmanager.get_recipients()
 
 		date = ""
 
@@ -78,7 +87,7 @@ class Error_handler(logging.Handler):
 		contents = contents.replace("{date}", date)
 
 		mail = {
-			"from": confmanager.config["sendgrid"]["sender"],
+			"from": self.confmanager.config["sendgrid"]["sender"],
 			"to": recipients,
 			"subject": "Backup needs attention",
 			"contents": contents

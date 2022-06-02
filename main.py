@@ -3,7 +3,6 @@ import os, logging
 from modules.configuration_manager import Configuration_manager
 from modules.backup_manager import Backup_manager
 from modules.argument_manager import Argument_manager
-from modules.innova_monitor import Innova_monitor
 
 logger = logging.getLogger("logger")
 
@@ -19,7 +18,6 @@ if (__name__ == "__main__"):
 	confmanager.load_registry(registry_path)
 
 	backup_manager = Backup_manager()
-	innova_monitor = Innova_monitor()
 
 	for project in confmanager.config["projects"]:
 		if "site" in project:
@@ -53,8 +51,3 @@ if (__name__ == "__main__"):
 				confmanager.update_entry(key)
 			else:
 				logger.info(f"Schema {key} backup is up-to-date.")
-
-	if (innova_monitor.ping()):
-		innova_monitor.checkout()
-	else:
-		logger.warning("Innova Monitor unresponsive")
