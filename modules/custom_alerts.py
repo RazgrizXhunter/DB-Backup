@@ -17,7 +17,7 @@ class Custom_alerts:
 			self.alerts = self.confmanager.config["custom_alerts"]
 
 	def space_alert(self):
-		if "free_space_percentage" not in self.alerts:
+		if "space_critical" not in self.alerts:
 			logger.warning("Can't raise an alert for free space without critical percentage!")
 			return
 
@@ -26,8 +26,8 @@ class Custom_alerts:
 
 		logger.info(f"Executing storage space check.\n\tFree space: {self.file_manager.to_human_readable_size(free)}\n\tTotal space: {self.file_manager.to_human_readable_size(total)}")
 
-		percentage = self.alerts["free_space_percentage"]
-		critical_level = round(total * (percentage / 100))
+		critical_percentage = self.alerts["space_critical"]
+		critical_level = round(total * (critical_percentage / 100))
 
 		logger.debug(f"Critical storage level set on: {self.file_manager.to_human_readable_size(critical_level)}")
 
