@@ -2,6 +2,7 @@ import logging, sys, os, atexit, codecs, socket, glob, time, locale
 from modules.mailing import Mailer
 from modules.configuration_manager import Configuration_manager
 from modules.custom_alerts import Custom_alerts
+from modules.file_manager import File_manager
 
 logger = logging.getLogger("logger")
 
@@ -40,6 +41,7 @@ class Error_handler(logging.Handler):
 	def send_error_mail(self) -> bool:
 		logger.debug("Sending notification email")
 		confmanager = Configuration_manager()
+		file_manager = File_manager()
 		
 		if (not confmanager.config):
 			logger.critical("Configuration file has not been loaded properly")
@@ -71,7 +73,7 @@ class Error_handler(logging.Handler):
 			logger.error(f"Could not load temporary log")
 			return False
 
-		contents = contents.replace("{server_name}", socket.gethostname())
+		contents = contents.replace("{server_name}", file_manager.get_hostname())
 		contents = contents.replace("{log}", logs)
 		contents = contents.replace("{date}", date)
 

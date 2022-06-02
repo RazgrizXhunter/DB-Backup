@@ -77,6 +77,9 @@ class File_manager:
 	def get_total_disk_space(self):
 		return psutil.disk_usage("/").total
 	
+	def get_hostname(self):
+		return socket.gethostname()
+	
 	def exists(self, path):
 		return os.path.exists(path)
 
