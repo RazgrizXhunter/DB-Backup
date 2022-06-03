@@ -31,8 +31,11 @@ if (__name__ == "__main__"):
 			frequency = project["site"]["backup_frequency"]
 			
 			if (backup_manager.backup_is_due(entry, frequency)):
-				backup_manager.backup_site(project["site"], confmanager.config["backup"]["target_directory"])
-				confmanager.update_entry(key)
+				success = backup_manager.backup_site(project["site"], confmanager.config["backup"]["target_directory"])
+				
+				if (success):
+					confmanager.update_entry(key)
+				
 			else:
 				logger.info(f"Site files {key} backup is up-to-date.")
 		
@@ -47,7 +50,10 @@ if (__name__ == "__main__"):
 			frequency = project["schema"]["backup_frequency"]
 			
 			if (backup_manager.backup_is_due(entry, frequency)):
-				backup_manager.backup_database(project["schema"], confmanager.config["backup"]["target_directory"])
-				confmanager.update_entry(key)
+				success = backup_manager.backup_database(project["schema"], confmanager.config["backup"]["target_directory"])
+
+				if (success):
+					confmanager.update_entry(key)
+				
 			else:
 				logger.info(f"Schema {key} backup is up-to-date.")

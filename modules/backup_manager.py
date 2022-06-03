@@ -32,6 +32,8 @@ class Backup_manager:
 			return False
 
 	def backup_site(self, site_files, target_directory):
+		has_backed_up = False
+
 		logger.info(f"Now trying to backup files in \"{site_files['path']}\"")
 
 		if (not self.file_manager.exists(site_files["path"])):
@@ -47,15 +49,19 @@ class Backup_manager:
 
 			compressed_site_backup_file_path = self.file_manager.compress(file_path=site_files["path"], target_directory=target_directory) # NEVER REMOVE ORIGINAL, IT'D DELETE THE SITE!
 
-			self.aws.s3_upload(compressed_site_backup_file_path)
+			has_backed_up = self.aws.s3_upload(compressed_site_backup_file_path)
 
 			if (not site_files["preserve"]):
 				self.file_manager.delete(compressed_site_backup_file_path)
 		
 		else:
-			self.aws.s3_upload(site_files["path"])
+			has_backed_up = self.aws.s3_upload(site_files["path"])
+		
+		return has_backed_up
 
 	def backup_database(self, schema, target_directory):
+		has_backed_up = False
+
 		logger.info(f"Now trying to backup schema \"{schema['name']}\"")
 		schema_size = self.dbmanager.get_schema_size(schema["name"])
 
@@ -68,7 +74,9 @@ class Backup_manager:
 		if (schema["compress"]):
 			backup_file_path = self.file_manager.compress(file_path=backup_file_path, target_directory=target_directory, remove_original=(not schema["preserve"]))
 		
-		self.aws.s3_upload(backup_file_path)
+		has_backed_up = self.aws.s3_upload(backup_file_path)
 
 		if (not schema["preserve"]):
 			self.file_manager.delete(backup_file_path)
+		
+		return has_backed_up

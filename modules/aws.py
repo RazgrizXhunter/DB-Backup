@@ -45,6 +45,7 @@ class AWS:
 			self.bucket.upload_file(file_path, fmanager.get_name(file_path))
 		except Exception as e:
 			logger.error(f"Failed to upload file.\n\t{e}")
+			return False
 		
 		logger.info("File uploaded succesfully")
 
