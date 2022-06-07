@@ -1,6 +1,7 @@
-import sys, logging
+import sys, logging, base64
 import boto3
 from modules.file_manager import File_manager
+from botocore.exceptions import ClientError
 
 logger = logging.getLogger("logger")
 
@@ -8,8 +9,10 @@ class AWS:
 
 	def __init__(self):
 		self.s3 = None
+		self.secret_manager = None
 		self.session = None
 		self.bucket = None
+		self.region_name = "us-east-1"
 	
 	def init_s3(self, key: str, secret: str, bucket: str) -> bool:
 		try:
@@ -50,3 +53,48 @@ class AWS:
 		logger.info("File uploaded succesfully")
 
 		return True
+
+	
+	def get_secret(self, secret_name: str) -> str:
+		logger.debug(f"AWS Secret Manager\nGetting Secret: {secret_name}")
+
+		secret_name = "Sendgrid_API"
+
+		self.secret_manager = self.session.client(
+			service_name = "secretsmanager",
+			region_name = self.region_name
+		)
+
+		try:
+			get_secret_value_response = self.secret_manager.get_secret_value(
+				SecretId = secret_name
+			)
+		except ClientError as error:
+			if error.response["Error"]["Code"] == "DecryptionFailureException":
+				logger.error("Secrets Manager can't decrypt the protected secret text using the provided KMS key")
+				return False
+
+			elif error.response["Error"]["Code"] == "InternalServiceErrorException":
+				logger.error("An error occurred on the server side")
+				return False
+
+			elif error.response["Error"]["Code"] == "InvalidParameterException":
+				logger.error("You provided an invalid value for a parameter")
+				return False
+
+			elif error.response["Error"]["Code"] == "InvalidRequestException":
+				logger.error("You provided a parameter value that is not valid for the current state of the resource")
+				return False
+
+			elif error.response["Error"]["Code"] == "ResourceNotFoundException":
+				logger.error("We can't find the resource that you asked for")
+				return False
+		else:
+			logger.debug("Decrypting secret using the associated KMS key")
+
+			if "SecretString" in get_secret_value_response:
+				secret = get_secret_value_response["SecretString"]
+			else:
+				secret = base64.b64decode(get_secret_value_response["SecretBinary"])
+	
+		return secret
