@@ -24,7 +24,7 @@ class Backup_manager:
 		if (not entry):
 			return True
 		
-		backup_due = entry + datetime.timedelta(days=frequency)
+		backup_due = entry + datetime.timedelta(hours=frequency)
 
 		if (backup_due <= self.today):
 			return True
