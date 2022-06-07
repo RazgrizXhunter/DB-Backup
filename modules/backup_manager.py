@@ -15,9 +15,9 @@ class Backup_manager:
 		self.dbmanager = Database_manager()
 		self.aws = AWS()
 
-		self.today = datetime.datetime.today()
 		bucket = self.confmanager.config["bucket"]
-		self.aws.init_s3(bucket["aws_access_key_id"], bucket["aws_secret_access_key"], bucket["name"])
+
+		self.aws.init_s3(bucket["name"])
 
 	def backup_is_due(self, entry, frequency):
 
@@ -26,7 +26,7 @@ class Backup_manager:
 		
 		backup_due = entry + datetime.timedelta(hours=frequency)
 
-		if (backup_due <= self.today):
+		if (backup_due <= datetime.datetime.today()):
 			return True
 		else:
 			return False

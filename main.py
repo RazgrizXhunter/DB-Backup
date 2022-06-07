@@ -6,17 +6,9 @@ from modules.argument_manager import Argument_manager
 
 logger = logging.getLogger("logger")
 
-if (__name__ == "__main__"):
+def main():
+	confmanager = load_config()
 	Argument_manager()
-
-	project_dir = os.path.realpath(os.path.dirname(__file__))
-	config_path = os.path.join(project_dir, "config/config.yaml")
-	registry_path = os.path.join(project_dir, "config/registry.yaml")
-	
-	confmanager = Configuration_manager()
-	confmanager.load_config(config_path)
-	confmanager.load_registry(registry_path)
-
 	backup_manager = Backup_manager()
 
 	for project in confmanager.config["projects"]:
@@ -57,3 +49,18 @@ if (__name__ == "__main__"):
 				
 			else:
 				logger.info(f"Schema {key} backup is up-to-date.")
+
+def load_config():
+	project_dir = os.path.realpath(os.path.dirname(__file__))
+	config_path = os.path.join(project_dir, "config/config.yaml")
+	registry_path = os.path.join(project_dir, "config/registry.yaml")
+	
+	confmanager = Configuration_manager()
+	confmanager.load_config(config_path)
+	confmanager.load_registry(registry_path)
+
+
+	return confmanager
+
+if (__name__ == "__main__"):
+	main()

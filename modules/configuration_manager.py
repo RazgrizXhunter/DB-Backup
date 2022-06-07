@@ -12,7 +12,7 @@ class Configuration_manager_meta(type):
 			cls._instances[cls] = instance
 		return cls._instances[cls]
 
-class Configuration_manager(metaclass=Configuration_manager_meta):
+class Configuration_manager(metaclass = Configuration_manager_meta):
 	config_path = None
 	registry_path = None
 
@@ -30,7 +30,7 @@ class Configuration_manager(metaclass=Configuration_manager_meta):
 		
 		return True
 	
-	def load_registry(self, absolute_path: str):
+	def load_registry(self, absolute_path: str) -> bool:
 		self.registry_path = absolute_path
 
 		logger.info(f"Opening registry file in: {self.registry_path}")
@@ -45,12 +45,17 @@ class Configuration_manager(metaclass=Configuration_manager_meta):
 					logger.debug(f"Registry file created.")
 			except Exception as e:
 				logger.critical("Could not create registry.")
+				return False
 		
 		with open(self.registry_path, "r") as registry_file:
 			try:
 				self.registry = yaml.safe_load(registry_file) or {}
 			except yaml.YAMLError as error:
 				logger.critical(f"Registry file could not be safely loaded.\n\t{format(error)}")
+				return False
+		
+		return True
+	
 		
 		return True
 	
@@ -66,7 +71,7 @@ class Configuration_manager(metaclass=Configuration_manager_meta):
 		
 		return True
 	
-	def has_entry(self, key):
+	def has_entry(self, key) -> bool:
 		key = key.replace(" ", "_")
 		if (not self.registry):
 			logger.warning("Registry not loaded or empty")

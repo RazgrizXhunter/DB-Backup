@@ -9,15 +9,15 @@ class Innova_monitor:
 		confmanager = Configuration_manager()
 		self.file_manager = File_manager()
 
-		self.config = confmanager.config["innova_monitor"]
+		self.instance = confmanager.config["instance"]
 
 		self.session = requests.Session()
 		self.session.headers = { "secret": self.config["secret"] }
 		self.api_url = self.config["url"]
 
 		self.machine = {
-			"ip" : self.config["ip"] if "ip" in self.config else self.my_ip(),
-			"name" : self.config["name"] if "name" in self.config else self.file_manager.get_hostname(),
+			"ip" : self.instance["ip"] if "ip" in self.instance else self.my_ip(),
+			"name" : self.instance["name"] if "name" in self.instance else self.file_manager.get_hostname(),
 			"total_space": self.file_manager.get_total_disk_space(),
 			"warning_percentage": confmanager.config["custom_alerts"]["space_warning"],
 			"critical_percentage": confmanager.config["custom_alerts"]["space_critical"]

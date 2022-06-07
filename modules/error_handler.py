@@ -15,6 +15,8 @@ class Error_handler(logging.Handler):
 		atexit.register(self.wrapup)
 
 		self.confmanager = Configuration_manager()
+		self.innova_monitor = Innova_monitor()
+		self.alert_manager = Custom_alerts()
 
 	def emit(self, record):
 		if (record.levelno >= 40):
@@ -25,10 +27,12 @@ class Error_handler(logging.Handler):
 			sys.exit()
 	
 	def wrapup(self):
-		innova_monitor = Innova_monitor()
-
 		logger.debug("Wrapping up")
-		self.alert_manager = Custom_alerts()
+
+		if (self.innova_monitor.ping()):
+			self.innova_monitor.checkout()
+		else:
+			logger.warning("Innova Monitor unresponsive")
 
 		if (self.alert_manager.space_alert()):
 			self.has_failed = True
@@ -38,10 +42,6 @@ class Error_handler(logging.Handler):
 			
 		self.cleanup()
 		
-		if (innova_monitor.ping()):
-			innova_monitor.checkout()
-		else:
-			logger.warning("Innova Monitor unresponsive")
 	
 	def cleanup(self):
 		logger.debug("Removing temporary files")
@@ -83,6 +83,7 @@ class Error_handler(logging.Handler):
 			return False
 
 		contents = contents.replace("{server_name}", file_manager.get_hostname())
+		contents = contents.replace("{ip}", self.confmanager.config["instance"]["ip"] if "ip" in self.confmanager.config["instance"] else self.innova_monitor.my_ip())
 		contents = contents.replace("{log}", logs)
 		contents = contents.replace("{date}", date)
 
@@ -95,11 +96,11 @@ class Error_handler(logging.Handler):
 
 		mailer.compose(mail)
 
-		# try:
-		# 	logger.debug(f"Mail was to be sent with:\n\t{logs}") # We don't wanna fill everyone's inbox with junk
-		# 	mailer.send()
-		# except Exception as e:
-		# 	logger.error(f"Could not send mail")
-		# 	return False
+		try:
+			mailer.send()
+			logger.warning("E-Mail sent")
+		except Exception as e:
+			logger.error(f"Could not send mail.\n\t{e}")
+			return False
 
 		return True
