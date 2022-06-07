@@ -1,6 +1,7 @@
 import logging, requests
 from modules.configuration_manager import Configuration_manager
 from modules.file_manager import File_manager
+from modules.aws import AWS
 
 logger = logging.getLogger("logger")
 
@@ -12,8 +13,12 @@ class Innova_monitor:
 		self.instance = confmanager.config["instance"]
 
 		self.session = requests.Session()
-		self.session.headers = { "secret": self.config["secret"] }
-		self.api_url = self.config["url"]
+
+		aws = AWS()
+		api_data = aws.get_secret("Innova_Monitor")
+		
+		self.session.headers = { "secret": api_data["secret"] }
+		self.api_url = api_data["url"]
 
 		self.machine = {
 			"ip" : self.instance["ip"] if "ip" in self.instance else self.my_ip(),

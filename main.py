@@ -3,6 +3,7 @@ import os, logging
 from modules.configuration_manager import Configuration_manager
 from modules.backup_manager import Backup_manager
 from modules.argument_manager import Argument_manager
+from modules.aws import AWS
 
 logger = logging.getLogger("logger")
 
@@ -59,6 +60,9 @@ def load_config():
 	confmanager.load_config(config_path)
 	confmanager.load_registry(registry_path)
 
+	AWS(confmanager.config["aws"]["region"], confmanager.config["aws"]["access_key_id"], confmanager.config["aws"]["secret_access_key"])
+
+	confmanager.load_aws_secrets()
 
 	return confmanager
 

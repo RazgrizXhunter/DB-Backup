@@ -1,33 +1,57 @@
-import sys, logging, base64
+import sys, logging, base64, json
 import boto3
-from modules.file_manager import File_manager
 from botocore.exceptions import ClientError
+from modules.file_manager import File_manager
 
 logger = logging.getLogger("logger")
 
-class AWS:
+class AWS_meta(type):
+	_instances = {}
 
-	def __init__(self):
+	def __call__(cls, *args, **kwargs):
+		if cls not in cls._instances:
+			instance = super().__call__(*args, **kwargs)
+			cls._instances[cls] = instance
+		return cls._instances[cls]
+
+class AWS(metaclass = AWS_meta):
+	def __init__(self, region: str, key: str, secret: str):
 		self.s3 = None
-		self.secret_manager = None
-		self.session = None
 		self.bucket = None
-		self.region_name = "us-east-1"
+		self.secret_manager = None
+
+		self.session = boto3.Session(
+			aws_access_key_id=key,
+			aws_secret_access_key=secret
+		)
+
+		self.region_name = region
 	
-	def init_s3(self, key: str, secret: str, bucket: str) -> bool:
+	def init_s3(self, bucket: str) -> bool:
+		logger.debug(f"Initializing AWS' S3")
+
 		try:
-			self.session = boto3.Session(
-				aws_access_key_id=key,
-				aws_secret_access_key=secret
-			)
-			
 			self.s3 = self.session.resource("s3")
-
 			self.bucket = self.s3.Bucket(bucket)
-
-			return True
 		except Exception as e:
-			logger.critical(f"AWS S3 service could not be initialized\n\t{e}")
+			logger.critical(f"There was an error while initializing AWS' S3.\n\t{e}")
+			return False
+
+		return True
+
+	def init_secret_manager(self) -> bool:
+		logger.debug(f"Initializing AWS' Secret Manager")
+
+		try:
+			self.secret_manager = self.session.client(
+				service_name = "secretsmanager",
+				region_name = self.region_name
+			)
+		except Exception as e:
+			logger.warning(f"There was an error while initializing AWS' Secret Manager.\n\t{e}")
+			return False
+		
+		return True
 	
 	def s3_upload(self, file_path: str, file_name: str = "") -> bool:
 		fmanager = File_manager()
@@ -53,18 +77,8 @@ class AWS:
 		logger.info("File uploaded succesfully")
 
 		return True
-
 	
-	def get_secret(self, secret_name: str) -> str:
-		logger.debug(f"AWS Secret Manager\nGetting Secret: {secret_name}")
-
-		secret_name = "Sendgrid_API"
-
-		self.secret_manager = self.session.client(
-			service_name = "secretsmanager",
-			region_name = self.region_name
-		)
-
+	def get_secret(self, secret_name: str) -> dict:
 		try:
 			get_secret_value_response = self.secret_manager.get_secret_value(
 				SecretId = secret_name
@@ -96,5 +110,5 @@ class AWS:
 				secret = get_secret_value_response["SecretString"]
 			else:
 				secret = base64.b64decode(get_secret_value_response["SecretBinary"])
-	
-		return secret
+
+		return json.loads(secret)

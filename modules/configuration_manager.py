@@ -1,5 +1,6 @@
 import os, sys, logging, yaml, datetime
 from modules.file_manager import File_manager
+from modules.aws import AWS
 
 logger = logging.getLogger("logger")
 
@@ -56,9 +57,27 @@ class Configuration_manager(metaclass = Configuration_manager_meta):
 		
 		return True
 	
+	def load_aws_secrets(self) -> bool:
+		aws = AWS()
+		aws.init_secret_manager()
+
+		if (not self.config or self.config == None):
+			return False
 		
+		if (self.config["sendgrid"]):
+			self.config["sendgrid"] = dict()
+			
+			sendgrid = aws.get_secret("Sendgrid_API")
+
+			if (not sendgrid):
+				return False
+			
+			self.config["sendgrid"]["api_key"] = sendgrid["Sendgrid_API_Key"]
+			self.config["sendgrid"]["sender"] = sendgrid["Sendgrid_Sender"]
+			
+
 		return True
-	
+
 	def save_registry(self):
 		if (not self.registry):
 			logger.warning("You can't save an empty registry")
