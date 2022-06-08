@@ -22,7 +22,7 @@ class Database_manager:
 			except Exception as e:
 				logger.critical(f"Directory could not be created.\n\t{e}")
 		
-		file_path = "{target_directory}/backup_{schema}.{extension}".format(
+		file_path = "{target_directory}/{schema}.{extension}".format(
 			target_directory = self.config["backup"]["target_directory"],
 			schema = schema,
 			extension = extension
@@ -36,7 +36,7 @@ class Database_manager:
 		)
 
 		logger.info(f"dumping on {file_path}")
-
+		
 		try:
 			subprocess.run(command, capture_output=True, shell=True)
 			logger.info("Dump complete!")
