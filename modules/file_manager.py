@@ -19,7 +19,7 @@ class File_manager:
 			return False
 		
 		if (method == "zip"): # match - not supported by python 3.9 or less
-			zip_filename = os.path.join(target_directory, self.get_name(absolute_file_path).split(".")[0].replace(" ", "_") + ".zip")
+			zip_filename = os.path.join(target_directory, self.get_name(absolute_file_path).replace(" ", "_") + "_" + time.strftime('%Y-%m-%d_%H-%M-%S') + ".zip")
 			
 			try:
 				logger.info(f"Compressing in: {zip_filename}")
@@ -95,7 +95,7 @@ class File_manager:
 		return total_size
  
 	def get_name(self, path):
-		return os.path.basename(path)
+		return os.path.basename(path).split(".")[0]
 	
 	def get_directory(self, path):
 		return os.path.dirname(path)

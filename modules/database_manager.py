@@ -1,4 +1,4 @@
-import os, subprocess, time, logging, re
+import os, subprocess, logging, re
 from modules.configuration_manager import Configuration_manager
 
 logger = logging.getLogger("logger")
@@ -22,10 +22,9 @@ class Database_manager:
 			except Exception as e:
 				logger.critical(f"Directory could not be created.\n\t{e}")
 		
-		file_path = "{target_directory}/backup_{schema}_{timestamp}.{extension}".format(
+		file_path = "{target_directory}/backup_{schema}.{extension}".format(
 			target_directory = self.config["backup"]["target_directory"],
 			schema = schema,
-			timestamp = time.strftime('%Y-%m-%d_%H-%M-%S'),
 			extension = extension
 		)
 
