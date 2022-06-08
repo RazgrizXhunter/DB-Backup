@@ -1,4 +1,16 @@
-boto3==1.23.7
+boto3==1.23.10
+botocore==1.26.10
+certifi==2022.5.18.1
+charset-normalizer==2.0.12
+idna==3.3
+jmespath==1.0.0
 psutil==5.9.1
+python-dateutil==2.8.2
+python-http-client==3.3.7
 PyYAML==6.0
+requests==2.27.1
+s3transfer==0.5.2
 sendgrid==6.9.7
+six==1.16.0
+starkbank-ecdsa==2.0.3
+urllib3==1.26.9
