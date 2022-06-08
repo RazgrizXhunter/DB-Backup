@@ -35,10 +35,10 @@ class Error_handler(logging.Handler):
 			logger.warning("Innova Monitor unresponsive")
 
 		if (self.alert_manager.space_alert()):
-			self.has_failed = True
+			logger.error("The machine is running out of space")
 		
 		if (self.has_failed):
-			email_sent = self.send_error_mail()
+			self.send_error_mail()
 			
 		self.cleanup()
 		
@@ -50,7 +50,6 @@ class Error_handler(logging.Handler):
 	
 	def send_error_mail(self) -> bool:
 		logger.debug("Sending notification email")
-		file_manager = File_manager()
 		
 		if (not self.confmanager.config):
 			logger.critical("Configuration file has not been loaded properly")
@@ -82,7 +81,7 @@ class Error_handler(logging.Handler):
 			logger.error(f"Could not load temporary log")
 			return False
 
-		contents = contents.replace("{server_name}", file_manager.get_hostname())
+		contents = contents.replace("{server_name}", File_manager.get_hostname())
 		contents = contents.replace("{ip}", self.confmanager.config["instance"]["ip"] if "ip" in self.confmanager.config["instance"] else self.innova_monitor.my_ip())
 		contents = contents.replace("{log}", logs)
 		contents = contents.replace("{date}", date)

@@ -1,4 +1,4 @@
-import os, sys, logging, yaml, datetime
+import os, logging, yaml, datetime
 from modules.file_manager import File_manager
 from modules.aws import AWS
 
@@ -14,12 +14,11 @@ class Configuration_manager_meta(type):
 		return cls._instances[cls]
 
 class Configuration_manager(metaclass = Configuration_manager_meta):
-	config_path = None
-	registry_path = None
-
-	def load_config(self, absolute_path: str) -> bool:
-		self.config_path = absolute_path
-
+	project_dir = os.path.realpath(os.path.dirname(__file__))
+	config_path = os.path.join(project_dir, "..", "config/config.yaml")
+	registry_path = os.path.join(project_dir, "..", "config/registry.yaml")
+		
+	def load_config(self) -> bool:
 		logger.info(f"Opening config file in: {self.config_path}")
 
 		with open(self.config_path) as config_file:
@@ -31,13 +30,10 @@ class Configuration_manager(metaclass = Configuration_manager_meta):
 		
 		return True
 	
-	def load_registry(self, absolute_path: str) -> bool:
-		self.registry_path = absolute_path
-
+	def load_registry(self) -> bool:
 		logger.info(f"Opening registry file in: {self.registry_path}")
-		filemanager = File_manager()
 
-		if (not filemanager.exists(self.registry_path)):
+		if (not File_manager.exists(self.registry_path)):
 			logger.warning(f"Registry file doesn't exist, creating...")
 
 			try:
@@ -58,7 +54,7 @@ class Configuration_manager(metaclass = Configuration_manager_meta):
 		return True
 	
 	def load_aws_secrets(self) -> bool:
-		aws = AWS()
+		aws = AWS(self.config["aws"]["access_key_id"], self.config["aws"]["secret_access_key"], self.config["aws"]["region"])
 		aws.init_secret_manager()
 
 		if (not self.config or self.config == None):
@@ -74,6 +70,17 @@ class Configuration_manager(metaclass = Configuration_manager_meta):
 			
 			self.config["sendgrid"]["api_key"] = sendgrid["Sendgrid_API_Key"]
 			self.config["sendgrid"]["sender"] = sendgrid["Sendgrid_Sender"]
+		
+		if (self.config["innova_monitor"]):
+			self.config["innova_monitor"] = dict()
+			
+			innova_monitor = aws.get_secret("Innova_Monitor")
+
+			if (not innova_monitor):
+				return False
+			
+			self.config["innova_monitor"]["secret"] = innova_monitor["secret"]
+			self.config["innova_monitor"]["url"] = innova_monitor["url"]
 			
 
 		return True
