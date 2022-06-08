@@ -1,45 +1,43 @@
 ---
+instance:
+  name: "Rocky Instance"
+  # ip: "192.168.0.1" # In case you need hardcoded IP address.
 custom_alerts:
   space_critical: 10
   space_warning: 30
-database:
-  user: user
-  password: password123
-projects:
-  - DB-Backup_project:
-    site:
-      path: "/path/to/project/directory"
-      backup_frequency: 7 # Days
-      backup_method: put
-      compress: true
-      preserve: false
-    schema:
-      name: mysql_schema
-      backup_frequency: 1
-      backup_method: put
-      compress: true
-      preserve: false
 backup:
   target_directory: "/home/user/Backups"
+database:
+  user: root
+  password: somepassword
+projects:
+  - innova:
+    site:
+      path: "/path/to/project"
+      backup_frequency: 2 # Hours
+      compress: True
+      preserve: True
+    schema:
+      name: innova
+      backup_frequency: 2 # Hours
+      compress: True
+      preserve: True
+aws:
+  region: "us-east-1"
+  access_key_id: "AWSACCESSKEYID"
+  secret_access_key: "AWSACCESSKEY"
 bucket:
-  name: bucket-name
-  aws_access_key_id: "AWSACCESSKEYID"
-  aws_secret_access_key: "AWSSECRET"
-sendgrid:
-  api_key: "SG.APIKey"
-  sender: "example@example.com"
-innova_monitor:
-  # name: "Set a proper name" # Else, the script will take the hostname as name
-  secret: "some_secret"
-  url: "http://localhost/api"
+  name: backup-bucket
+sendgrid: True # Only true if the variable is stored in AWS' Secret Manager
+innova_monitor: True # Only true if the variable is stored in AWS' Secret Manager
 responsibles:
   - John:
     name: "John Doe"
     email: "john.doe@example.com"
   - Jane:
-    name: "Jane Smith"
-    email: "jsmith@test.com"
+    name: "Jane Doe"
+    email: "jane.doe@example.com"
   - Juan:
     name: "Juan Perez"
-    email: "juanito@something.com"
+    email: "juanito.perez@example.com"
 ...
