@@ -1,4 +1,4 @@
-import sys, logging, base64, json
+import logging, base64, json
 import boto3
 from botocore.exceptions import ClientError
 from modules.file_manager import File_manager
@@ -15,14 +15,14 @@ class AWS_meta(type):
 		return cls._instances[cls]
 
 class AWS(metaclass = AWS_meta):
-	def __init__(self, region: str, key: str, secret: str):
+	def __init__(self, id: str, key: str, region: str):
 		self.s3 = None
 		self.bucket = None
 		self.secret_manager = None
-
+		
 		self.session = boto3.Session(
-			aws_access_key_id=key,
-			aws_secret_access_key=secret
+			aws_access_key_id = id,
+			aws_secret_access_key = key
 		)
 
 		self.region_name = region
@@ -54,22 +54,20 @@ class AWS(metaclass = AWS_meta):
 		return True
 	
 	def s3_upload(self, file_path: str, file_name: str = "") -> bool:
-		fmanager = File_manager()
-
 		logger.info("Preparing to upload file to S3 bucket")
 		logger.debug(f"File: {file_path}")
 
 		if (not self.s3):
 			logger.critical("S3 session uninitialized")
 
-		if (not fmanager.exists(file_path)):
+		if (not File_manager.exists(file_path)):
 			logger.error(f"Failed to upload file {file_path}. The file doesn't exist")
 			return False
 		
-		if (not file_name): file_name = fmanager.get_name(file_path)
+		if (not file_name): file_name = File_manager.get_name(file_path)
 		
 		try:
-			self.bucket.upload_file(file_path, fmanager.get_name(file_path))
+			self.bucket.upload_file(file_path, file_name)
 		except Exception as e:
 			logger.error(f"Failed to upload file.\n\t{e}")
 			return False

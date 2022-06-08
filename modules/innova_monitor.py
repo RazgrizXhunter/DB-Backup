@@ -7,23 +7,17 @@ logger = logging.getLogger("logger")
 
 class Innova_monitor:
 	def __init__(self) -> None:
+		self.session = requests.Session()
 		confmanager = Configuration_manager()
-		self.file_manager = File_manager()
 
 		self.instance = confmanager.config["instance"]
-
-		self.session = requests.Session()
-
-		aws = AWS()
-		api_data = aws.get_secret("Innova_Monitor")
-		
-		self.session.headers = { "secret": api_data["secret"] }
-		self.api_url = api_data["url"]
+		self.session.headers = { "secret": confmanager.config["innova_monitor"]["secret"] }
+		self.api_url = confmanager.config["innova_monitor"]["url"]
 
 		self.machine = {
 			"ip" : self.instance["ip"] if "ip" in self.instance else self.my_ip(),
-			"name" : self.instance["name"] if "name" in self.instance else self.file_manager.get_hostname(),
-			"total_space": self.file_manager.get_total_disk_space(),
+			"name" : self.instance["name"] if "name" in self.instance else File_manager.get_hostname(),
+			"total_space": File_manager.get_total_disk_space(),
 			"warning_percentage": confmanager.config["custom_alerts"]["space_warning"],
 			"critical_percentage": confmanager.config["custom_alerts"]["space_critical"]
 		}
@@ -45,7 +39,7 @@ class Innova_monitor:
 			"ip": self.machine["ip"],
 			"name": self.machine["name"],
 			"total_space": self.machine["total_space"],
-			"free_space": self.file_manager.get_free_disk_space(),
+			"free_space": File_manager.get_free_disk_space(),
 			"warning_percentage": self.machine["warning_percentage"],
 			"critical_percentage": self.machine["critical_percentage"]
 		}
