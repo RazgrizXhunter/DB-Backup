@@ -26,7 +26,12 @@ def main():
 			frequency = project["site"]["backup_frequency"]
 			
 			if (backup_manager.backup_is_due(entry, frequency)):
-				success = backup_manager.backup_site(project["site"], confmanager.config["backup"]["target_directory"])
+				success = backup_manager.backup_site(
+					site_path = project["site"]["path"],
+					target_directory = confmanager.config["backup"]["target_directory"],
+					compress = project["site"]["compress"],
+					preserve = project["site"]["preserve"]
+				)
 				
 				if (success):
 					confmanager.update_entry(key)
@@ -45,7 +50,12 @@ def main():
 			frequency = project["schema"]["backup_frequency"]
 			
 			if (backup_manager.backup_is_due(entry, frequency)):
-				success = backup_manager.backup_database(project["schema"], confmanager.config["backup"]["target_directory"])
+				success = backup_manager.backup_database(
+					schema = project["schema"]["name"],
+					target_directory = confmanager.config["backup"]["target_directory"],
+					compress = project["schema"]["compress"],
+					preserve = project["schema"]["preserve"]
+				)
 
 				if (success):
 					confmanager.update_entry(key)
