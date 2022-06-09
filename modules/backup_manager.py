@@ -36,6 +36,13 @@ class Backup_manager:
 			logger.error("Provided file path doesn't exist.")
 			return False
 		
+		if (not File_manager.exists(target_directory)):
+			try:
+				File_manager.create_directory(target_directory)
+			except Exception as e:
+				logger.critical(f"Could not create backup directory.")
+				return False
+		
 		if (compress):
 			directory_size = File_manager.get_size(site_path)
 
@@ -52,7 +59,7 @@ class Backup_manager:
 		
 		else:
 			has_backed_up = self.aws.s3_upload(site_path)
-		
+
 		return has_backed_up
 
 	def backup_database(self, schema: str, target_directory: str, compress: bool, preserve: bool) -> bool:
@@ -64,6 +71,13 @@ class Backup_manager:
 		if (not File_manager.has_enough_space(schema_size)):
 			logger.error("Not enough space to back up database")
 			return False
+		
+		if (not File_manager.exists(target_directory)):
+			try:
+				File_manager.create_directory(target_directory)
+			except Exception as e:
+				logger.critical(f"Could not create backup directory.")
+				return False
 		
 		backup_file_path = self.dbmanager.dump_schema(schema)
 

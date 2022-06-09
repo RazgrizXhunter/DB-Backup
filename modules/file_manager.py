@@ -88,6 +88,15 @@ class File_manager:
 		return os.path.exists(path)
 
 	@staticmethod
+	def create_directory(path: str):
+		try:
+			os.makedirs(path, exist_ok = True)
+			return True
+		except Exception as e:
+			print(f"Could not create directory {path}")
+			return False
+
+	@staticmethod
 	def get_size(path):
 		total_size = 0
 		for dirpath, dirnames, filenames in os.walk(path):
