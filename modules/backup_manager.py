@@ -81,7 +81,7 @@ class Backup_manager:
 		
 		backup_file_path = self.dbmanager.dump_schema(schema)
 
-		if (schema["compress"]):
+		if (compress):
 			backup_file_path = File_manager.compress(file_path=backup_file_path, target_directory=target_directory, remove_original=(not preserve))
 		
 		has_backed_up = self.aws.s3_upload(backup_file_path)
