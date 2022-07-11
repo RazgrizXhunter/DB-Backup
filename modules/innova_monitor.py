@@ -1,4 +1,5 @@
 import logging, requests
+from datetime import datetime
 from modules.configuration_manager import Configuration_manager
 from modules.file_manager import File_manager
 from modules.aws import AWS
@@ -9,12 +10,15 @@ class Innova_monitor:
 	def __init__(self) -> None:
 		self.session = requests.Session()
 		confmanager = Configuration_manager()
+		aws = AWS()
 
 		self.instance = confmanager.config["instance"]
 		self.session.headers = { "secret": confmanager.config["innova_monitor"]["secret"] }
-		self.api_url = confmanager.config["innova_monitor"]["url"]
+		self.api_url = aws.get_secret("Innova_Monitor") if confmanager.config["innova_monitor"] else None;
 
 		self.machine = {
+			"id" : self.my_id(),
+			"name_tag" : self.my_nametag(),
 			"ip" : self.instance["ip"] if "ip" in self.instance else self.my_ip(),
 			"name" : self.instance["name"] if "name" in self.instance else File_manager.get_hostname(),
 			"total_space": File_manager.get_total_disk_space(),
@@ -31,17 +35,30 @@ class Innova_monitor:
 		
 	def my_ip(self) -> str:
 		return self.session.get("https://api.ipify.org").content.decode("utf8")
+	
+	def my_id(self) -> str:
+		try:
+			return self.session.get("http://instance-data/latest/meta-data/instance-id").content.decode("utf8")
+		except:
+			return None
+
+	def my_nametag(self) -> str:
+		return self.session.get("http://instance-data/latest/meta-data/tags/instance/Name").content.decode("utf8")
 
 	def checkout(self) -> bool:
 		logger.info("Sending data to Monitor")
+		now = datetime.now()
 
 		data = {
-			"ip": self.machine["ip"],
-			"name": self.machine["name"],
-			"total_space": self.machine["total_space"],
-			"free_space": File_manager.get_free_disk_space(),
-			"warning_percentage": self.machine["warning_percentage"],
-			"critical_percentage": self.machine["critical_percentage"]
+			"id" : self.machine["id"],
+			"name_tag" : self.machine["name_tag"],
+			"ip" : self.machine["ip"],
+			"name" : self.machine["name"],
+			"last_updated" : now.strftime("%d/%m/%Y %H:%M:%S"),
+			"total_space" : self.machine["total_space"],
+			"free_space" : File_manager.get_free_disk_space(),
+			"warning_percentage" : self.machine["warning_percentage"],
+			"critical_percentage" : self.machine["critical_percentage"]
 		}
 
 		try:
