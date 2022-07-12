@@ -162,3 +162,4 @@ _*
 *.tar
 *.gz
 *.sql
+test.py
