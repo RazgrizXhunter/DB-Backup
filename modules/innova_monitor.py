@@ -28,9 +28,9 @@ class Innova_monitor:
 	
 	def ping(self) -> bool:
 		try:
-			return True if self.session.get(self.api_url + "/ping").status_code == 200 else False # self.api_url + "/ping"
+			return True if self.session.get(self.api_url["url"] + "/ping").status_code == 200 else False # self.api_url + "/ping"
 		except Exception as e:
-			logger.error(e)
+			logger.error(f"Could not ping Innova Monitor\n{e}")
 			return False
 		
 	def my_ip(self) -> str:
