@@ -53,7 +53,7 @@ class AWS(metaclass = AWS_meta):
 		
 		return True
 	
-	def s3_upload(self, file_path: str, file_name: str = "") -> bool:
+	def s3_upload(self, file_path: str, file_name: str = "", subfolder: str = "") -> bool:
 		logger.info("Preparing to upload file to S3 bucket")
 		logger.debug(f"File: {file_path}")
 
@@ -67,7 +67,7 @@ class AWS(metaclass = AWS_meta):
 		if (not file_name): file_name = File_manager.get_name(file_path)
 		
 		try:
-			self.bucket.upload_file(file_path, file_name)
+			self.bucket.upload_file(file_path, f"{subfolder}/{file_name}")
 		except Exception as e:
 			logger.error(f"Failed to upload file.\n\t{e}")
 			return False

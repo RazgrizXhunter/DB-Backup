@@ -15,6 +15,8 @@ def main():
 	Argument_manager()
 
 	for project in confmanager.config["projects"]:
+		project_name = list(project.keys())[0]
+
 		if "site" in project:
 			key = project["site"]["path"]
 			
@@ -27,6 +29,7 @@ def main():
 			
 			if (backup_manager.backup_is_due(entry, frequency)):
 				success = backup_manager.backup_site(
+					project_name = project_name,
 					site_path = project["site"]["path"],
 					target_directory = confmanager.config["backup"]["target_directory"],
 					compress = project["site"]["compress"],
@@ -51,6 +54,7 @@ def main():
 			
 			if (backup_manager.backup_is_due(entry, frequency)):
 				success = backup_manager.backup_database(
+					project_name = project_name,
 					schema = project["schema"]["name"],
 					target_directory = confmanager.config["backup"]["target_directory"],
 					compress = project["schema"]["compress"],

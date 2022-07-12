@@ -27,7 +27,7 @@ class Backup_manager:
 		else:
 			return False
 
-	def backup_site(self, site_path: str, target_directory: str, compress: bool, preserve: bool) -> bool:
+	def backup_site(self, project_name: str, site_path: str, target_directory: str, compress: bool, preserve: bool) -> bool:
 		has_backed_up = False
 
 		logger.info(f"Now trying to backup files in \"{site_path}\"")
@@ -52,17 +52,23 @@ class Backup_manager:
 
 			compressed_site_backup_file_path = File_manager.compress(file_path = site_path, target_directory = target_directory) # NEVER REMOVE ORIGINAL, IT'D DELETE THE SITE!
 
-			has_backed_up = self.aws.s3_upload(compressed_site_backup_file_path)
+			has_backed_up = self.aws.s3_upload(
+				file_path = compressed_site_backup_file_path,
+				subfolder = project_name
+			)
 
 			if (not preserve):
 				File_manager.delete(compressed_site_backup_file_path)
 		
 		else:
-			has_backed_up = self.aws.s3_upload(site_path)
+			has_backed_up = self.aws.s3_upload(
+				file_path = site_path,
+				subfolder = project_name
+			)
 
 		return has_backed_up
 
-	def backup_database(self, schema: str, target_directory: str, compress: bool, preserve: bool) -> bool:
+	def backup_database(self, project_name: str, schema: str, target_directory: str, compress: bool, preserve: bool) -> bool:
 		has_backed_up = False
 
 		logger.info(f"Now trying to backup schema \"{schema}\"")
@@ -84,7 +90,10 @@ class Backup_manager:
 		if (compress):
 			backup_file_path = File_manager.compress(file_path=backup_file_path, target_directory=target_directory, remove_original=(not preserve))
 		
-		has_backed_up = self.aws.s3_upload(backup_file_path)
+		has_backed_up = self.aws.s3_upload(
+			file_path = backup_file_path,
+			subfolder = project_name
+		)
 
 		if (not preserve):
 			File_manager.delete(backup_file_path)
