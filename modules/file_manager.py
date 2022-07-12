@@ -93,7 +93,7 @@ class File_manager:
 			os.makedirs(path, exist_ok = True)
 			return True
 		except Exception as e:
-			print(f"Could not create directory {path}")
+			logger.error(f"Could not create directory {path}")
 			return False
 
 	@staticmethod
