@@ -13,8 +13,9 @@ class Innova_monitor:
 		aws = AWS()
 
 		self.instance = confmanager.config["instance"]
-		self.session.headers = { "secret": confmanager.config["innova_monitor"]["secret"] }
-		self.api_url = aws.get_secret("Innova_Monitor") if confmanager.config["innova_monitor"] else None;
+		self.api_url = aws.get_secret("Innova_Monitor")["url"] if confmanager.config["innova_monitor"] else None;
+		self.api_secret = aws.get_secret("Innova_Monitor")["secret"] if confmanager.config["innova_monitor"] else None;
+		self.session.headers = { "secret": self.api_secret }
 
 		self.machine = {
 			"id" : self.my_id(),
@@ -28,7 +29,7 @@ class Innova_monitor:
 	
 	def ping(self) -> bool:
 		try:
-			return True if self.session.get(self.api_url["url"] + "/ping").status_code == 200 else False # self.api_url + "/ping"
+			return True if self.session.get(self.api_url + "/ping").status_code == 200 else False # self.api_url + "/ping"
 		except Exception as e:
 			logger.error(f"Could not ping Innova Monitor\n{e}")
 			return False
