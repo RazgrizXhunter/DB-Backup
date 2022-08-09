@@ -17,10 +17,12 @@ class Backup_manager:
 		self.aws.init_s3(self.confmanager.config["bucket"]["name"])
 
 	def backup_is_due(self, entry, frequency):
+		tolerance = 0.5 # In hours, arbitrary. Since backups aren't actually made at the exact same time each time, it can skip one if it's early a couple of seconds.
+
 		if (not entry):
 			return True
 		
-		backup_due = entry + datetime.timedelta(hours=frequency)
+		backup_due = entry + datetime.timedelta(hours=frequency - tolerance)
 
 		if (backup_due <= datetime.datetime.today()):
 			return True
