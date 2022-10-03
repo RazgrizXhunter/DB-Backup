@@ -28,7 +28,8 @@ class Database_manager:
 			extension = extension
 		)
 
-		command = "mysqldump -u{user} -p\'{password}\' {schema} > {file_path}".format(
+		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} > {file_path}".format(
+			hostname = self.config["database"]["hostname"] or "localhost",
 			user = self.config["database"]["user"],
 			password = self.config["database"]["password"],
 			schema = schema,
@@ -53,7 +54,8 @@ class Database_manager:
 			logger.error("You need to load the config file first!")
 			return False
 
-		command = "mysqldump -u{user} -p\'{password}\' {schema} | wc -c".format(
+		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} | wc -c".format(
+			hostname = self.config["database"]["hostname"] or "localhost",
 			user = self.config["database"]["user"],
 			password = self.config["database"]["password"],
 			schema = schema
