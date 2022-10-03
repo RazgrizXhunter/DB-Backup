@@ -52,7 +52,11 @@ class Backup_manager:
 				logger.error("Not enough space to backup site files")
 				return False
 
-			compressed_site_backup_file_path = File_manager.compress(file_path = site_path, target_directory = target_directory) # NEVER REMOVE ORIGINAL, IT'D DELETE THE SITE!
+			compressed_site_backup_file_path = File_manager.compress(
+				file_path = site_path,
+				target_directory = target_directory,
+				zip_filename = project_name
+			) # NEVER REMOVE ORIGINAL, IT'D DELETE THE SITE!
 
 			has_backed_up = self.aws.s3_upload(
 				file_path = compressed_site_backup_file_path,
@@ -90,7 +94,11 @@ class Backup_manager:
 		backup_file_path = self.dbmanager.dump_schema(schema)
 
 		if (compress):
-			backup_file_path = File_manager.compress(file_path=backup_file_path, target_directory=target_directory, remove_original=(not preserve))
+			backup_file_path = File_manager.compress(
+				file_path = backup_file_path,
+				target_directory = target_directory,
+				remove_original = (not preserve)
+			)
 		
 		has_backed_up = self.aws.s3_upload(
 			file_path = backup_file_path,

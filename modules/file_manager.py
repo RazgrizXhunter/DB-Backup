@@ -5,7 +5,7 @@ logger = logging.getLogger("logger")
 
 class File_manager:
 	@staticmethod
-	def compress(file_path, target_directory, method="zip", remove_original=False):
+	def compress(file_path, target_directory, project_name: str, method = "zip", remove_original = False):
 		logger.info("Attempting compression...")
 
 		if (method not in ["zip"]):
@@ -19,7 +19,8 @@ class File_manager:
 			return False
 		
 		if (method == "zip"): # match - not supported by python 3.9 or less
-			zip_filename = os.path.join(target_directory, File_manager.get_name(absolute_file_path).split(".")[0].replace(" ", "_") + "_" + time.strftime('%Y-%m-%d_%H-%M-%S') + ".zip")
+			filename = project_name if not project_name == None else File_manager.get_name(absolute_file_path).split(".")[0]
+			zip_filename = os.path.join(target_directory, filename.replace(" ", "_") + "_" + time.strftime('%Y-%m-%d_%H-%M-%S') + ".zip")
 			
 			try:
 				logger.info(f"Compressing in: {zip_filename}")
