@@ -5,7 +5,7 @@ logger = logging.getLogger("logger")
 
 class File_manager:
 	@staticmethod
-	def compress(file_path, target_directory, project_name: str, method = "zip", remove_original = False):
+	def compress(file_path, target_directory, project_name: str = None, method = "zip", remove_original = False):
 		logger.info("Attempting compression...")
 
 		if (method not in ["zip"]):
