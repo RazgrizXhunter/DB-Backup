@@ -19,7 +19,7 @@ class Innova_monitor:
 
 		self.machine = {
 			"id" : self.my_id(),
-			"name_tag" : self.my_nametag(),
+			"name_tag" : self.my_nametag(), # TODO: Set ternary operator and try except or try getting tags with boto3
 			"ip" : self.instance["ip"] if "ip" in self.instance else self.my_ip(),
 			"name" : self.instance["name"] if "name" in self.instance else File_manager.get_hostname(),
 			"total_space": File_manager.get_total_disk_space(),
@@ -44,7 +44,10 @@ class Innova_monitor:
 			return None
 
 	def my_nametag(self) -> str:
-		return self.session.get("http://instance-data/latest/meta-data/tags/instance/Name").content.decode("utf8")
+		try:
+			return self.session.get("http://instance-data/latest/meta-data/tags/instance/Name").content.decode("utf8")
+		except:
+			return None
 
 	def checkout(self) -> bool:
 		logger.info("Sending data to Monitor")
