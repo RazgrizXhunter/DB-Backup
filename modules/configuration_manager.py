@@ -1,4 +1,4 @@
-import os, logging, yaml, datetime
+import os, logging, yaml, datetime, re
 from modules.file_manager import File_manager
 from modules.aws import AWS
 
@@ -17,13 +17,31 @@ class Configuration_manager(metaclass = Configuration_manager_meta):
 	project_dir = os.path.realpath(os.path.dirname(__file__))
 	config_path = os.path.join(project_dir, "..", "config/config.yaml")
 	registry_path = os.path.join(project_dir, "..", "config/registry.yaml")
+	env_var_pattern = re.compile('.*?\${(\w+)}.*?')
+
+	def constructor_env_variables(self, loader, node):
+		value = loader.construct_scalar(node)
+		match = self.env_var_pattern.findall(value)
+
+		if match:
+			full_value = value
+			for g in match:
+				full_value = full_value.replace(
+					f'${{{g}}}', os.environ.get(g, g)
+				)
+			return full_value
+		return value
 		
 	def load_config(self) -> bool:
 		logger.info(f"Opening config file in: {self.config_path}")
 
+		loader = yaml.SafeLoader
+		loader.add_implicit_resolver('', self.env_var_pattern, None)
+		loader.add_constructor('', self.constructor_env_variables)
+
 		with open(self.config_path) as config_file:
 			try:
-				self.config = yaml.safe_load(config_file)
+				self.config = yaml.load(config_file, Loader=loader)
 				logger.info("Loaded")
 			except yaml.YAMLError as error:
 				logger.critical(f"Configuration file could not be safely loaded.\n\t{format(error)}")
