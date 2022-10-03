@@ -8,6 +8,7 @@ custom_alerts:
 backup:
   target_directory: "/home/user/Backups"
 database:
+  hostname: localhost # Non-mandatory, localhost default value.
   user: root
   password: somepassword
 projects:
