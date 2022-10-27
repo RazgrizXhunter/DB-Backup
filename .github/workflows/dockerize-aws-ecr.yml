@@ -29,6 +29,6 @@ jobs:
           AWS_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SHA: ${{ github.sha }}
         run: |
-        docker build -t $AWS_REGISTRY/$IMAGE-NAME:$SHA -t $AWSID.dkr.ecr.$AWSREGION.amazonaws.com/$IMAGE-NAME:latest .\
-        docker push $AWSID.dkr.ecr.$AWSREGION.amazonaws.com/$IMAGE-NAME:$SHA\
-        docker push $AWSID.dkr.ecr.$AWSREGION.amazonaws.com/$IMAGE-NAME:latest
+          docker build -t $AWS_REGISTRY/$IMAGE-NAME:$SHA -t $AWSID.dkr.ecr.$AWSREGION.amazonaws.com/$IMAGE-NAME:latest .
+          docker push $AWSID.dkr.ecr.$AWSREGION.amazonaws.com/$IMAGE-NAME:$SHA
+          docker push $AWSID.dkr.ecr.$AWSREGION.amazonaws.com/$IMAGE-NAME:latest
