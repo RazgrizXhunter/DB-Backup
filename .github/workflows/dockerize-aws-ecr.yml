@@ -30,6 +30,7 @@ jobs:
         env:
           AWS_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SHA: ${{ github.sha }}
+          IMAGE-NAME: ${{ github.repository }}
         run: |
           docker build -t $AWS_REGISTRY/$IMAGE-NAME:$SHA -t $AWS_REGISTRY/$IMAGE-NAME:latest .
           docker push $AWS_REGISTRY/$IMAGE-NAME:$SHA
