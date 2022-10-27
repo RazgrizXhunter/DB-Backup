@@ -1,0 +1,36 @@
+name: DB-Backup-image-builder
+run-name: Triggered by ${{ github.event }} on ${{ github.ref }}
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+    
+jobs:
+  check-code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Python Linter
+        uses: sunnysid3up/python-linter@master
+        with:
+          mypy-options: "--ignore-missing-imports --show-error-codes"
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Image builder
+        env:
+          AWS_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          SHA: ${{ github.sha }}
+        run: |
+          docker build -t $AWS_REGISTRY/$IMAGE-NAME:$SHA -t $AWS_REGISTRY/$IMAGE-NAME:latest .
+          docker push $AWS_REGISTRY/$IMAGE-NAME:$SHA
+          docker push $AWS_REGISTRY/$IMAGE-NAME:latest
