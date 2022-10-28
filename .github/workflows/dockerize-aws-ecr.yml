@@ -10,7 +10,7 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
+      - name: Checkout code
         uses: actions/checkout@v2
       # - name: Python Linter
       #   uses: sunnysid3up/python-linter@master
