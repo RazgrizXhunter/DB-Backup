@@ -1,9 +1,8 @@
 name: DB-Backup-image-builder
 run-name: Triggered by ${{ github.event }} on ${{ github.ref }}
 on:
-  push:
-    branches:
-      - 'main'
+  release:
+    types: [published, prereleased, released]
   workflow_dispatch:
     
 jobs:
@@ -29,8 +28,9 @@ jobs:
         env:
           AWS_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SHA: ${{ github.sha }}
+          TAG: ${{ github.ref }}
         run: |
           REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d '/' -f 2 | tr '[:upper:]' '[:lower:]')
-          docker build -t $AWS_REGISTRY/$REPO_NAME:$SHA -t $AWS_REGISTRY/$REPO_NAME:latest .
-          docker push $AWS_REGISTRY/$REPO_NAME:$SHA
+          docker build -t $AWS_REGISTRY/$REPO_NAME:$TAG -t $AWS_REGISTRY/$REPO_NAME:latest .
+          docker push $AWS_REGISTRY/$REPO_NAME:$TAG
           docker push $AWS_REGISTRY/$REPO_NAME:latest
