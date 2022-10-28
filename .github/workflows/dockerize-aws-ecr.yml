@@ -2,7 +2,7 @@ name: DB-Backup-image-builder
 run-name: Triggered by ${{ github.event }} on ${{ github.ref }}
 on:
   release:
-    types: [published, prereleased, released]
+    types: [prereleased, released]
   workflow_dispatch:
     
 jobs:
