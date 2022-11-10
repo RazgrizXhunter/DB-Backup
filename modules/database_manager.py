@@ -29,7 +29,7 @@ class Database_manager:
 		)
 
 		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} > {file_path}".format(
-			hostname = self.config["database"]["hostname"] or "localhost",
+			hostname = self.config.get("database").get("hostname", "localhost"),
 			user = self.config["database"]["user"],
 			password = self.config["database"]["password"],
 			schema = schema,
@@ -55,7 +55,7 @@ class Database_manager:
 			return False
 
 		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} | wc -c".format(
-			hostname = self.config["database"]["hostname"] or "localhost",
+			hostname = self.config.get("database").get("hostname", "localhost"),
 			user = self.config["database"]["user"],
 			password = self.config["database"]["password"],
 			schema = schema
