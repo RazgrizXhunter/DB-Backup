@@ -35,7 +35,7 @@ class Error_handler(logging.Handler):
 			logger.warning("Innova Monitor unresponsive")
 
 		if (self.alert_manager.space_alert()):
-			logger.error("The machine is running out of space")
+			logger.error("The instance is running out of space")
 		
 		if (self.has_failed):
 			self.send_error_mail()
