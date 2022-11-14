@@ -84,8 +84,8 @@ class Configuration_manager(metaclass = Configuration_manager_meta):
 			sendgrid = aws.get_secret("Sendgrid_API")
 
 			if (sendgrid):
-			self.config["sendgrid"]["api_key"] = sendgrid["Sendgrid_API_Key"]
-			self.config["sendgrid"]["sender"] = sendgrid["Sendgrid_Sender"]
+				self.config["sendgrid"]["api_key"] = sendgrid["Sendgrid_API_Key"]
+				self.config["sendgrid"]["sender"] = sendgrid["Sendgrid_Sender"]
 			else:
 				self.config["sendgrid"] = False
 		
