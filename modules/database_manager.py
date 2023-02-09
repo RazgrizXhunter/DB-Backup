@@ -28,7 +28,7 @@ class Database_manager:
 			extension = extension
 		)
 
-		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} > {file_path}".format(
+		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} --column-statistics=0 > {file_path}".format(
 			hostname = self.config.get("database").get("hostname", "localhost"),
 			user = self.config["database"]["user"],
 			password = self.config["database"]["password"],
