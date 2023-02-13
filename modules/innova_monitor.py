@@ -29,7 +29,11 @@ class Innova_monitor:
 	
 	def ping(self) -> bool:
 		try:
-			return True if self.session.get(self.api_url + "/ping").status_code == 200 else False # self.api_url + "/ping"
+			if self.api_url:
+				return True if self.session.get(self.api_url + "/ping").status_code == 200 else False # self.api_url + "/ping"
+			else:
+				logger.warning("API URL not defined")
+				return False
 		except Exception as e:
 			logger.error(f"Could not ping Innova Monitor\n{e}")
 			return False
