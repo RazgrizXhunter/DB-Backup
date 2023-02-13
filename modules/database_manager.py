@@ -28,11 +28,14 @@ class Database_manager:
 			extension = extension
 		)
 
-		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} --column-statistics=0 > {file_path}".format(
+		is_column_statistics_supported = True if os.system("mysqldump --column-statistics=0 --version &>/dev/null") == 0 else False
+
+		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} {extra_arguments} > {file_path}".format(
 			hostname = self.config.get("database").get("hostname", "localhost"),
 			user = self.config["database"]["user"],
 			password = self.config["database"]["password"],
 			schema = schema,
+			extra_arguments = "--column-statistics=0" if is_column_statistics_supported else "",
 			file_path = file_path
 		)
 
