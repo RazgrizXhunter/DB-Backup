@@ -29,10 +29,11 @@ class Error_handler(logging.Handler):
 	def wrapup(self):
 		logger.debug("Wrapping up")
 
-		if (self.innova_monitor.ping()):
-			self.innova_monitor.checkout()
-		else:
-			logger.warning("Innova Monitor unresponsive")
+		if (self.innova_monitor.api_url != None):
+			if (self.innova_monitor.ping()):
+				self.innova_monitor.checkout()
+			else:
+				logger.warning("Innova Monitor unresponsive")
 
 		if (self.alert_manager.space_alert()):
 			logger.error("The instance is running out of space")
