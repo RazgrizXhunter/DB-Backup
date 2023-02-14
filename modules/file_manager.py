@@ -24,7 +24,7 @@ class File_manager:
 			
 			try:
 				logger.info(f"Compressing in: {zip_filename}")
-				with zipfile.ZipFile(zip_filename, mode="x", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as compressed_file:
+				with zipfile.ZipFile(zip_filename, mode="x", compression=zipfile.ZIP_DEFLATED, compresslevel=9, strict_timestamps=False) as compressed_file:
 					if (os.path.isdir(absolute_file_path)):
 						File_manager.zipdir(absolute_file_path, compressed_file)
 					else:
