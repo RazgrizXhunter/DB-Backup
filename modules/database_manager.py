@@ -28,7 +28,7 @@ class Database_manager:
 			extension = extension
 		)
 
-		is_column_statistics_supported = True if os.system("mysqldump --column-statistics=0 --version &>/dev/null") == 0 else False
+		is_column_statistics_supported = True if os.popen('mysqldump --column-statistics=0 --version >/dev/null 2>&1 && echo "True" || echo "False"').read().strip() == "True" else False
 
 		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} {extra_arguments} > {file_path}".format(
 			hostname = self.config.get("database").get("hostname", "localhost"),
