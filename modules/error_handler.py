@@ -67,7 +67,9 @@ class Error_handler(logging.Handler):
 			logger.warning(f"Time locale could not be set, email will be sent without date.\n\t{e}")
 		
 		try:
-			email = codecs.open("./email/email_body.html", "r")
+			current_path = os.path.dirname(os.path.abspath(__file__))
+			email_path = os.path.join(current_path, "..", "email/email_body.html")
+			email = codecs.open(email_path, "r")
 			contents = email.read()
 			email.close()
 		except Exception as e:
