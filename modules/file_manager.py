@@ -1,4 +1,4 @@
-import os, time, psutil, logging, math, socket
+import os, time, psutil, shutil, glob, logging, math, socket, subprocess
 import zipfile
 
 logger = logging.getLogger("logger")
@@ -8,7 +8,7 @@ class File_manager:
 	def compress(file_path, target_directory, project_name: str = None, method = "zip", remove_original = False):
 		logger.info("Attempting compression...")
 
-		if (method not in ["zip"]):
+		if (method not in ["zip", "shutil", "glob", "bash"]):
 			logger.error("Invalid compression method.")
 			return False
 		
@@ -18,10 +18,10 @@ class File_manager:
 			logger.error("Provided path doesn't exist")
 			return False
 		
+		filename = project_name if not project_name == None else File_manager.get_name(absolute_file_path).split(".")[0]
+		zip_filename = os.path.join(target_directory, filename.replace(" ", "_") + "_" + time.strftime('%Y-%m-%d_%H-%M-%S') + ".zip")
+		
 		if (method == "zip"): # match - not supported by python 3.9 or less
-			filename = project_name if not project_name == None else File_manager.get_name(absolute_file_path).split(".")[0]
-			zip_filename = os.path.join(target_directory, filename.replace(" ", "_") + "_" + time.strftime('%Y-%m-%d_%H-%M-%S') + ".zip")
-			
 			try:
 				logger.info(f"Compressing in: {zip_filename}")
 				with zipfile.ZipFile(zip_filename, mode="x", compression=zipfile.ZIP_DEFLATED, compresslevel=9, strict_timestamps=False) as compressed_file:
@@ -35,6 +35,26 @@ class File_manager:
 
 			except Exception as e:
 				logger.error(f"File could not be compressed.\n\t{e}")
+		
+		elif (method == "glob"):
+			with zipfile.ZipFile(zip_filename, mode="x", compression=zipfile.ZIP_DEFLATED, compresslevel=9, strict_timestamps=False) as compressed_file:
+				for file in glob.glob(os.path.join(absolute_file_path, "**"), recursive = True):
+					compressed_file.write(file)
+
+		elif (method == "shutil"):
+			shutil.make_archive(zip_filename, 'zip', absolute_file_path)
+		
+		elif (method == "bash"):
+			command = "sudo zip -qr {dest_filename} {file_path}".format(
+				dest_filename = zip_filename,
+				file_path = absolute_file_path
+			)
+			try:
+				subprocess.run(command, shell=True)
+				logger.info(f"File compressed in {zip_filename} with bash method!")
+			except Exception as e:
+				logger.error(f"File could not be compressed with bash method!.\n\t{e}")
+		
 		else:
 			logger.error("Compression method not supported")
 		
