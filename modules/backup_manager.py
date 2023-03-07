@@ -55,7 +55,8 @@ class Backup_manager:
 			compressed_site_backup_file_path = File_manager.compress(
 				file_path = site_path,
 				target_directory = target_directory,
-				project_name = project_name + '_site'
+				project_name = project_name + '_site',
+				method = "bash"
 			) # NEVER REMOVE ORIGINAL, IT'D DELETE THE SITE!
 
 			has_backed_up = self.aws.s3_upload(
