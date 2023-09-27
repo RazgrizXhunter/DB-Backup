@@ -71,6 +71,15 @@ class Configuration_manager(metaclass = Configuration_manager_meta):
 		
 		return True
 	
+	def select_database(self, database_name):
+		databases = self.config["databases"]
+		
+		for database in databases:
+			if database_name in database:
+				return database
+		
+		return None
+	
 	def load_aws_secrets(self) -> bool:
 		aws = AWS(self.config["aws"]["access_key_id"], self.config["aws"]["secret_access_key"], self.config["aws"]["region"])
 		aws.init_secret_manager()

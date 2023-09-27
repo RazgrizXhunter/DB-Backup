@@ -53,6 +53,20 @@ def main():
 			frequency = project["schema"]["backup_frequency"]
 			
 			if (backup_manager.backup_is_due(entry, frequency)):
+				try:
+					project_database = project["schema"]["database"]
+				except KeyError:
+					print(f"The project {project_name} doesn't have a database configured")
+					continue
+
+				database = confmanager.select_database(project_database)
+				
+				if (database == None):
+					print(f"The project {project_name} has {project['schema']['database']} configured but it couldn't be found.")
+					continue
+
+				hostname = database["hostname"]
+
 				success = backup_manager.backup_database(
 					project_name = project_name,
 					schema = project["schema"]["name"],
