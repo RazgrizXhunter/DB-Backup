@@ -68,6 +68,7 @@ def main():
 				hostname = database["hostname"]
 
 				success = backup_manager.backup_database(
+					hostname = hostname,
 					project_name = project_name,
 					schema = project["schema"]["name"],
 					target_directory = confmanager.config["backup"]["target_directory"],

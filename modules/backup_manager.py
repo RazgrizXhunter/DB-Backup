@@ -75,10 +75,10 @@ class Backup_manager:
 
 		return has_backed_up
 
-	def backup_database(self, project_name: str, schema: str, target_directory: str, compress: bool, preserve: bool) -> bool:
+	def backup_database(self, project_name: str, schema: str, target_directory: str, compress: bool, preserve: bool, hostname: str = "localhost") -> bool:
 		has_backed_up = False
 
-		logger.info(f"Now trying to backup schema \"{schema}\"")
+		logger.info(f"Now trying to backup schema \"{schema}\" in {hostname}")
 		schema_size = self.dbmanager.get_schema_size(schema)
 
 		if (not File_manager.has_enough_space(schema_size)):
@@ -92,7 +92,7 @@ class Backup_manager:
 				logger.critical(f"Could not create backup directory.")
 				return False
 		
-		backup_file_path = self.dbmanager.dump_schema(schema)
+		backup_file_path = self.dbmanager.dump_schema(schema, hostname)
 
 		if (compress):
 			backup_file_path = File_manager.compress(
