@@ -7,10 +7,17 @@ custom_alerts:
   space_warning: 30
 backup:
   target_directory: "/home/user/Backups"
-database:
-  hostname: localhost # Non-mandatory, localhost default value.
-  user: root
-  password: somepassword
+
+databases:
+  - rds-database:
+    hostname: "rds-database.123456789.us-east-1.rds.amazonaws.com"
+    user: "root"
+    password: "p4s5w0rd"
+  - localhost:
+    hostname: "localhost"
+    user: "root"
+    password: "p4s5w0rd"
+
 projects:
   - innova:
     site:
@@ -19,10 +26,24 @@ projects:
       compress: True
       preserve: True
     schema:
+      database: "rds-database"
       name: innova
       backup_frequency: 2 # Hours
       compress: True
       preserve: True
+  - web:
+    site:
+      path: "/path/to/project"
+      backup_frequency: 2 # Hours
+      compress: True
+      preserve: True
+    schema:
+      database: "localhost"
+      name: innova
+      backup_frequency: 2 # Hours
+      compress: True
+      preserve: True
+
 aws:
   region: "us-east-1"
   access_key_id: "AWSACCESSKEYID"
