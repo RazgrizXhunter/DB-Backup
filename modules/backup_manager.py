@@ -79,7 +79,7 @@ class Backup_manager:
 		has_backed_up = False
 
 		logger.info(f"Now trying to backup schema \"{schema}\" in {hostname}")
-		schema_size = self.dbmanager.get_schema_size(schema)
+		schema_size = self.dbmanager.get_schema_size(schema, hostname)
 
 		if (not File_manager.has_enough_space(schema_size)):
 			logger.error("Not enough space to back up database")
