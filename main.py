@@ -65,10 +65,8 @@ def main():
 					logger.error(f"The project {project_name} has {project['schema']['database']} configured but it couldn't be found.")
 					continue
 
-				hostname = database["hostname"]
-
 				success = backup_manager.backup_database(
-					hostname = hostname,
+					database = database,
 					project_name = project_name,
 					schema = project["schema"]["name"],
 					target_directory = confmanager.config["backup"]["target_directory"],

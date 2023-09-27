@@ -8,7 +8,7 @@ class Database_manager:
 		confmanager = Configuration_manager()
 		self.config = confmanager.config
 	
-	def dump_schema(self, schema: str, hostname: str, extension: str = "sql") -> str:
+	def dump_schema(self, schema: str, database: dict, extension: str = "sql") -> str:
 		logger.info(f"Attempting dump of schema: {schema}")
 
 		if (self.config == None):
@@ -31,9 +31,9 @@ class Database_manager:
 		is_column_statistics_supported = True if os.popen('mysqldump --column-statistics=0 --version >/dev/null 2>&1 && echo "True" || echo "False"').read().strip() == "True" else False
 
 		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} {extra_arguments} > {file_path}".format(
-			hostname = hostname,
-			user = self.config["database"]["user"],
-			password = self.config["database"]["password"],
+			hostname = database["hostname"],
+			user = database["user"],
+			password = database["password"],
 			schema = schema,
 			extra_arguments = "--column-statistics=0" if is_column_statistics_supported else "",
 			file_path = file_path
@@ -50,7 +50,7 @@ class Database_manager:
 		
 		return file_path
 	
-	def get_schema_size(self, schema: str, hostname: str) -> int:
+	def get_schema_size(self, schema: str, database: dict) -> int:
 		logger.info(f"Attempting to weigh schema: {schema}")
 
 		if (not self.config):
@@ -58,9 +58,9 @@ class Database_manager:
 			return False
 
 		command = "mysqldump -h {hostname} -u{user} -p\'{password}\' {schema} | wc -c".format(
-			hostname = hostname,
-			user = self.config["database"]["user"],
-			password = self.config["database"]["password"],
+			hostname = database["hostname"],
+			user = database["user"],
+			password = database["password"],
 			schema = schema
 		)
 
