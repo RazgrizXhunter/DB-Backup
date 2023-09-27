@@ -56,13 +56,13 @@ def main():
 				try:
 					project_database = project["schema"]["database"]
 				except KeyError:
-					print(f"The project {project_name} doesn't have a database configured")
+					logger.error(f"The project {project_name} doesn't have a database configured")
 					continue
 
 				database = confmanager.select_database(project_database)
 				
 				if (database == None):
-					print(f"The project {project_name} has {project['schema']['database']} configured but it couldn't be found.")
+					logger.error(f"The project {project_name} has {project['schema']['database']} configured but it couldn't be found.")
 					continue
 
 				hostname = database["hostname"]
