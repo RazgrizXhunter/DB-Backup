@@ -56,7 +56,7 @@ def main():
 				try:
 					project_database = project["schema"]["database"]
 				except KeyError:
-					logger.error(f"The project {project_name} doesn't have a database configured")
+					logger.error(f"The project {project_name} has a schema but doesn't have a database configured")
 					continue
 
 				database = confmanager.select_database(project_database)
