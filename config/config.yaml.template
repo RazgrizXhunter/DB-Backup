@@ -25,24 +25,28 @@ projects:
       backup_frequency: 2 # Hours
       compress: True
       preserve: True
+      critical: True
     schema:
       database: "rds-database"
       name: innova
       backup_frequency: 2 # Hours
       compress: True
       preserve: True
+      critical: True
   - web:
     site:
       path: "/path/to/project"
       backup_frequency: 2 # Hours
       compress: True
       preserve: True
+      critical: True
     schema:
       database: "localhost"
       name: innova
       backup_frequency: 2 # Hours
       compress: True
       preserve: True
+      critical: True
 
 aws:
   region: "us-east-1"
