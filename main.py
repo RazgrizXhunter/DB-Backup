@@ -29,7 +29,7 @@ def main():
             frequency = project["site"]["backup_frequency"]
             
             is_due = backup_manager.backup_is_due(entry, frequency)
-            critical = project["site"]["critical"]
+            critical = project["site"].get("critical", False)
 
             if (critical): 
                 should_backup = is_due
@@ -63,7 +63,7 @@ def main():
             frequency = project["schema"]["backup_frequency"]
 
             is_due = backup_manager.backup_is_due(entry, frequency)
-            critical = project["schema"]["critical"]
+            critical = project["schema"].get("critical", False)
 
             if (critical): 
                 should_backup = is_due
