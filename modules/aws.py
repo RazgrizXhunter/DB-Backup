@@ -1,4 +1,5 @@
 import logging, base64, json
+from urllib.parse import urlencode
 import boto3
 from botocore.exceptions import ClientError
 from modules.file_manager import File_manager
@@ -56,6 +57,9 @@ class AWS(metaclass = AWS_meta):
 	def s3_upload(self, file_path: str, file_name: str = "", subfolder: str = "") -> bool:
 		logger.info("Preparing to upload file to S3 bucket")
 		logger.debug(f"File: {file_path}")
+		tags = {
+			"lifecycle": "expire-90d"
+		}
 
 		if (not self.s3):
 			logger.critical("S3 session uninitialized")
@@ -67,7 +71,12 @@ class AWS(metaclass = AWS_meta):
 		if (not file_name): file_name = File_manager.get_name(file_path)
 		
 		try:
-			self.bucket.upload_file(file_path, f"{subfolder}/{file_name}")
+			# logger.debug(f"Uploading file: {file_path} to {subfolder}/{file_name} with tags {urlencode(tags)}")
+			self.bucket.upload_file(
+				file_path,
+				f"{subfolder}/{file_name}",
+				ExtraArgs = {"Tagging": urlencode(tags)}
+			)			
 		except Exception as e:
 			logger.error(f"Failed to upload file.\n\t{e}")
 			return False
